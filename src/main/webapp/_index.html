@@ -1,0 +1,27 @@
+<%@page import="java.time.LocalTime"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Start Page</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <%
+            HtmlBodySection headerSection = PageStandardParts.getPageHeader();
+            String header = headerSection.getSection();
+            out.println(header);
+        %>
+        
+        
+        <h1>Welcome to EXPENSE EXPERT Application!</h1>
+        
+        
+        
+        <a href="ManageExpense"> Kiadások kezelése </a><br>
+        <a href="ManageCategories"> Kategóriák kezelése </a><br><br>
+        
+        
+    </body>
+</html>
