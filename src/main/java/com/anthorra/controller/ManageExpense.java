@@ -29,7 +29,9 @@ public class ManageExpense extends HttpServlet
     
     private ArrayList<Category> mainCategories;
     private ArrayList<SubCategory> subCategories;
-    private CatModel cm = new CatModel();
+    private CatModel cm;
+    private String message;
+    private String messageError;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -53,128 +55,15 @@ public class ManageExpense extends HttpServlet
         try (PrintWriter out = response.getWriter())
         {
             HtmlPage page = new HtmlPage();
-            page = ExpenseView.getPageExpense();
+            page = ExpenseView.getPageExpense(mainCategories, subCategories, message);
             out.println(page.getPage());
             
-            
-            /* TODO output your page here. You may use following sample code. */
-            //out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//                out.println("<head>");
-//                    out.println("<title>Servlet ManageExpense</title>");     
-//                    /*JAVASCRIPT*/    
-//                        out.println("<script>" + getCascadeJs() + "</script>");
-//                out.println("</head>");
-            
-            out.println("<body>");
-            out.println("<h1>Költségek Kezelése SERVLET</h1>");
-            
-                out.println("<form method=\"post\" action=\"AddExpense\">");
-                out.println("<fieldset>");
-                out.println("<legend>Költség:</legend>");
-                    out.println("<label for=\"isExpense\">Kiadás:</label>");
-                    out.println("<input type=\"checkbox\" name=\"isExpense\" value=\"true\" /></br></br>");
-
-                    out.println("<label for=\"amount\">Érték:</label><br>");
-                    out.println("<input type=\"text\" name=\"amount\" value=\"\" /></br>");
-
-                    out.println("<label for=\"comment\">Komment:</label><br>");
-                    out.println("<input type=\"text\" name=\"comment\" value=\"\" /></br>");
-                    
-                    /*CATEGORIES*/
-                        out.println("<label for=\"categories\">Válassz kategóriát:</label></br>");
-                        out.println("<select id=\"type\" name=\"categories\">");
-                        /*for(Category c : mainCategories)
-                            {
-                                out.println("<option value=\"" + c.getId() + "\">" + c.getCategoryName() + "</option>");
-                            }*/
-                        out.println("<option value=\"\" selected=\"selected\">Válassz!</option>");
-                        out.println("</select> </br></br>");
-                    
-                    /*SUBCATEGORIES*/
-                        out.println("<label for=\"subcategories\">Válassz alkategóriát:</label></br>");
-                        out.println("<select id=\"subtype\" name=\"subcategories\">");
-                        /*for(SubCategory sc : subCategories)
-                            {
-                                out.println("<option value=\"" + sc.getId() + "\">" + sc.getCategoryName() + "</option>");
-                            }*/
-                        out.println("<option value=\"\" selected=\"selected\">Válassz!</option>");
-                        out.println("</select> </br></br>");
-                    
-                    /*SUBMIT BUTTON*/
-                    out.println("<input type=\"submit\" value=\"Mentés\" /></br>");
-                out.println("</fieldset>");
-                out.println("</form>");
-            
-            out.println("</body>");
-            out.println("</html>");
             
             
         }
     }
     
-    private String getTypesAsJson()
-    {
-        String typesJson = "{";
-        int catSize = mainCategories.size();
-        int subCatSize = subCategories.size();
-        int parentId = 0;
-        
-        for(int i = 0; i < catSize; i++)
-            {
-                typesJson += " \""  + mainCategories.get(i).getCategoryName() +  "\"";
-                
-                typesJson += ": {";
-                for(int j = 0; j < subCatSize; j++)
-                {
-                    if(parentId==subCategories.get(j).getParentId() && parentId==mainCategories.get(i).getId())
-                    {
-                        typesJson += ",";
-                    }
-                    parentId = subCategories.get(j).getParentId();
-                    
-                    if(parentId==mainCategories.get(i).getId())
-                    {
-                        typesJson += " \""  + subCategories.get(j).getCategoryName() +  "\": []";
-                        //if(j<subCatSize-1){typesJson += ",";}
-                    }
-                }
-                typesJson += " }";
-                if(i<catSize-1){typesJson += ",";}
-            }
-        typesJson += " }";
-        //System.out.println(typesJson);
-        
-        return typesJson;
-    }
-    private String getCascadeJs()
-    {
-        String jsCascade = "var subjectObject = \n" +
-                        getTypesAsJson() + ";\n" +
-                        "\n" +
-                        "window.onload = function() \n" +
-                        "{\n" +
-                        "    var subjectSel = document.getElementById(\"type\");\n" +
-                        "    var topicSel = document.getElementById(\"subtype\");\n" +
-                        "    \n" +
-                        "    for (var x in subjectObject) \n" +
-                        "    {\n" +
-                        "      subjectSel.options[subjectSel.options.length] = new Option(x, x);\n" +
-                        "    }\n" +
-                        "    \n" +
-                        "    subjectSel.onchange = function() \n" +
-                        "    {\n" +
-                        "        topicSel.length = 1;\n" +
-                        "        for (var y in subjectObject[this.value]) \n" +
-                        "        {\n" +
-                        "          topicSel.options[topicSel.options.length] = new Option(y, y);\n" +
-                        "        }\n" +
-                        "    };\n" +
-                        "    \n" +
-                        "} ;";
-        
-        return jsCascade;
-    }
+    
     
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

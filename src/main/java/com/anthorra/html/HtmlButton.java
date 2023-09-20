@@ -20,7 +20,7 @@ public class HtmlButton extends HtmlBodyElement
         this.text = text;
         this.type = type;
         this.attr = new HashMap<String, String>();
-        addAttribute("type", "type");
+        addAttribute("type", type);
     }
     
     

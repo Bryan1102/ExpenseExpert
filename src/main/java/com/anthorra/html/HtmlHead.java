@@ -8,6 +8,7 @@ public class HtmlHead
     private String title;
     private String charset;
     private String stylesheet;
+    private String jScript;
     
     private String constructHeader()
     {
@@ -17,7 +18,7 @@ public class HtmlHead
         if(charset != null){header += "<meta charset=\"" + charset + "\">";}else{header += "<meta charset=\"UTF-8\">";}
         header += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
         if(stylesheet != null){header += "<link rel=\"stylesheet\" href=\"" + stylesheet + "\">";}
-        
+        if(jScript != null){header += "<script>" + jScript + "</script>";}
         header += "</head>";
         
         return header;
@@ -54,6 +55,15 @@ public class HtmlHead
         {
             stylesheet = path;
         }
+    }
+
+    public void setjScript(String jScript)
+    {
+        if(jScript != null)
+        {
+            this.jScript = jScript;
+        }
+        
     }
 
     
