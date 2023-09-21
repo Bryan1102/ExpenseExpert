@@ -17,12 +17,15 @@ public class ExpenseModel
         int retVal = -1;
         Connection con = null;
         PreparedStatement st = null;
+        
+        System.out.println(fr.getRealizedDate());
+        
         try
         {
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
             
             String v_sql = "DECLARE @RC int\n" +
-                            "EXECUTE @RC = [dbo].[P_INSERT_FR] ?,?,?,?,CONVERT(DATETIME, ?)  ,?\n" +
+                            "EXECUTE @RC = [dbo].[P_INSERT_FR] ?,?,?,?,?  ,?\n" +
                             "SELECT @RC";
             
             // Obtain a statement
@@ -35,8 +38,14 @@ public class ExpenseModel
             st.setString(6, fr.getComment());
             
             // Execute the query
-            retVal = st.executeUpdate();
-            System.out.println("saveFinancialRecord: " + retVal);
+            //retVal = st.executeUpdate();
+            //because of 'A result set was generated for update' type error
+            ResultSet rs = st.executeQuery(); // Not update, you're returning a ResultSet.
+                        if (rs.next()) {
+                          retVal = (rs.getInt(1));
+                          System.out.println("new FinancialRecord ID: " + retVal);
+                        }
+            //System.out.println("saveFinancialRecord: " + retVal);
             
             // Closing the connection as per the requirement with connection is completed
             con.close();

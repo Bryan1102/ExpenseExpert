@@ -4,33 +4,14 @@ package com.anthorra.view;
 import com.anthorra.html.HtmlBodyDiv;
 import com.anthorra.html.HtmlBodySection;
 import com.anthorra.html.HtmlPage;
-import com.anthorra.expenseexpert.Category;
-import com.anthorra.expenseexpert.SubCategory;
-import java.util.ArrayList;
 /**
  *
  * @author Anthorra
  */
 public class ExpenseView
 {
-    
-    public static HtmlPage getPageExpense(ArrayList<Category> mainCategories, ArrayList<SubCategory> subCategories, String message)
+    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, String categoriesJson, String message)
     {
-        String[] optionsCategories = new String[mainCategories.size()];
-        String[] optionsSubCategories = new String[subCategories.size()];
-        
-            
-            for(int i = 0; i < mainCategories.size(); i++)
-            {
-                optionsCategories[i] = mainCategories.get(i).getCategoryName();
-            }    
-        
-            int i = 0;
-            for(SubCategory sc : subCategories)
-            {
-                optionsSubCategories[i] = sc.getCategoryName();
-                i += 1;
-            }
         String[] dummy = {" - válassz - "};
         
         HtmlPage page = new HtmlPage();
@@ -39,7 +20,7 @@ public class ExpenseView
         page.setLang("hu");
         page.headerTitle("Expense Expert - Kiadások");
         page.getHtmlHeader().setStylesheet("https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css");
-        page.getHtmlHeader().setjScript(getCascadeJs(mainCategories, subCategories));
+        page.getHtmlHeader().setjScript(getCascadeJs(categoriesJson));
 
         /* HTML BODY */
             /* HEADER */
@@ -135,44 +116,11 @@ public class ExpenseView
         
     }
     
-    private static String getTypesAsJson(ArrayList<Category> mainCategories, ArrayList<SubCategory> subCategories)
-    {
-        String typesJson = "{";
-        int catSize = mainCategories.size();
-        int subCatSize = subCategories.size();
-        int parentId = 0;
-        
-        for(int i = 0; i < catSize; i++)
-            {
-                typesJson += " \""  + mainCategories.get(i).getCategoryName() +  "\"";
-                
-                typesJson += ": {";
-                for(int j = 0; j < subCatSize; j++)
-                {
-                    if(parentId==subCategories.get(j).getParentId() && parentId==mainCategories.get(i).getId())
-                    {
-                        typesJson += ",";
-                    }
-                    parentId = subCategories.get(j).getParentId();
-                    
-                    if(parentId==mainCategories.get(i).getId())
-                    {
-                        typesJson += " \""  + subCategories.get(j).getCategoryName() +  "\": []";
-                        //if(j<subCatSize-1){typesJson += ",";}
-                    }
-                }
-                typesJson += " }";
-                if(i<catSize-1){typesJson += ",";}
-            }
-        typesJson += " }";
-        //System.out.println(typesJson);
-        
-        return typesJson;
-    }
-    private static String getCascadeJs(ArrayList<Category> mainCategories, ArrayList<SubCategory> subCategories)
+
+    private static String getCascadeJs(String categoriesJson)
     {
         String jsCascade = "var subjectObject = \n" +
-                        getTypesAsJson(mainCategories, subCategories) + ";\n" +
+                        categoriesJson + ";\n" +
                         "\n" +
                         "window.onload = function() \n" +
                         "{\n" +

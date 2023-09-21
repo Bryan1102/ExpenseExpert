@@ -34,25 +34,7 @@ public class AddExpense extends HttpServlet
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter())
         {
-            
-            
-            /* TODO output your page here. You may use following sample code. */
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//            out.println("<head>");
-//            out.println("<title>Servlet AddExpense</title>");            
-//            out.println("</head>");
-//            out.println("<body>");
-//            out.println("<h1>Servlet AddExpense at " + request.getContextPath() + "</h1>");
-//            String dbSuccess;
-//            if(dbResponse>=1){dbSuccess = "Pénzügyi tétel felvétele sikeres!";}
-//            else{dbSuccess = "Pénzügyi tétel felvétele sikertelen!";}
-//            out.println("<h2>" + dbSuccess + "</h2>");
-//            
-//            out.println("</body>");
-//            out.println("</html>");
-            
-            response.sendRedirect("ManageExpense.jsp");
+           response.sendRedirect("ManageExpense");
         }
     }
 
@@ -69,9 +51,7 @@ public class AddExpense extends HttpServlet
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        System.out.println("doGet method, process előtt");
         processRequest(request, response);
-        System.out.println("doGet method, process előtt");
     }
 
     /**
@@ -90,11 +70,11 @@ public class AddExpense extends HttpServlet
         /*amount*/
         String amount = request.getParameter("amount");
         double amountDouble = Double.parseDouble(amount);
-        //System.out.println(amountDouble);
+        System.out.println("amount=" + amountDouble);
         
         /*comment*/
         String comment = request.getParameter("comment");
-        //System.out.println(comment);
+        System.out.println("comment=" + comment);
         
         /*isExpense*/
         String isExpense = request.getParameter("isExpense");
@@ -103,7 +83,7 @@ public class AddExpense extends HttpServlet
                     isExpense = "false";
                 }
         Boolean isExpenseBoolean = Boolean.parseBoolean(isExpense);
-        System.out.println(isExpenseBoolean);
+        System.out.println("isExpense? " + isExpenseBoolean);
         
         
         ExpenseModel model = new ExpenseModel();

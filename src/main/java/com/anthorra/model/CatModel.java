@@ -19,12 +19,20 @@ public class CatModel
 {
     private ArrayList<Category> mainCategories;
     private ArrayList<SubCategory> subCategories;
+    private String[] optionsCategories;
+    private String[] optionsSubCategories;
+    private String[][] categoriesTable;
+    private String categoriesJson;
 
     public CatModel()
     {
         this.mainCategories = retrieveMainCategories();
         this.subCategories = retrieveSubCategories();
-        System.out.println("new Category Model created");
+        ConvertCategoriesToArray();
+        ConvertSubCategoriesToArray();
+        ConvertCategoriesToTable();
+        ConvertCategoriesToJson();
+        
     }
     
     
@@ -367,7 +375,115 @@ public class CatModel
     {
         return mainCategories;
     }
+
+    public String[] getOptionsCategories()
+    {
+        return optionsCategories;
+    }
+
+    public String[] getOptionsSubCategories()
+    {
+        return optionsSubCategories;
+    }
+
+    public String[][] getCategoriesTable()
+    {
+        return categoriesTable;
+    }
+
+    public String getCategoriesJson()
+    {
+        return categoriesJson;
+    }
     
     
+    
+    /* Convert ARRAYLIST TO ARRAYS */
+    private void ConvertCategoriesToArray()
+    {
+        this.optionsCategories = new String[mainCategories.size()];
+        for(int i = 0; i < mainCategories.size(); i++)
+    {
+        optionsCategories[i] = mainCategories.get(i).getCategoryName();
+    }    
+
+    }
+    private void ConvertSubCategoriesToArray()
+    {
+        this.optionsSubCategories = new String[subCategories.size()];
+        int i = 0;
+        for(SubCategory sc : subCategories)
+        {
+            optionsSubCategories[i] = sc.getCategoryName();
+            i += 1;
+        }
+        
+    }
+    private void ConvertCategoriesToTable()
+    {
+        categoriesTable = new String[mainCategories.size() + 1][2];
+        categoriesTable[0][0] = "Főkategóriák";
+        categoriesTable[0][1] = "Alkategóriák";
+                
+        for(int i = 0; i < mainCategories.size(); i++)
+            {
+                categoriesTable[i + 1][0] = mainCategories.get(i).getCategoryName();
+                String subCategoryNames = "";
+                boolean isFirst = false;
+                
+                for(int j = 0; j < subCategories.size(); j++)
+                {
+                    
+                    if(mainCategories.get(i).getId() == subCategories.get(j).getParentId())
+                    {
+                        if(isFirst){subCategoryNames += ", ";}
+                        subCategoryNames += subCategories.get(j).getCategoryName();
+                        isFirst = true;
+                    }
+                }
+                categoriesTable[i + 1][1] = subCategoryNames;
+            }            
+                
+                
+    }
+    private void ConvertCategoriesToJson()
+    {
+        String typesJson = "{";
+        int catSize = mainCategories.size();
+        int subCatSize = subCategories.size();
+        int parentId = 0;
+        
+        for(int i = 0; i < catSize; i++)
+            {
+                typesJson += " \""  + mainCategories.get(i).getCategoryName() +  "\"";
+                
+                typesJson += ": {";
+                for(int j = 0; j < subCatSize; j++)
+                {
+                    if(parentId==subCategories.get(j).getParentId() && parentId==mainCategories.get(i).getId())
+                    {
+                        typesJson += ",";
+                    }
+                    parentId = subCategories.get(j).getParentId();
+                    
+                    if(parentId==mainCategories.get(i).getId())
+                    {
+                        typesJson += " \""  + subCategories.get(j).getCategoryName() +  "\": []";
+                        //if(j<subCatSize-1){typesJson += ",";}
+                    }
+                }
+                typesJson += " }";
+                if(i<catSize-1){typesJson += ",";}
+            }
+        typesJson += " }";
+        categoriesJson = typesJson;
+    }
+    
+        
+                
+            
+            
+        
+            
     
 }
