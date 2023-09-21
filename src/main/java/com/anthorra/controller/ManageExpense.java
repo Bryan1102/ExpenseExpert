@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
 
 /**
  *
@@ -26,8 +27,10 @@ public class ManageExpense extends HttpServlet
 {
     
     private CatModel cm;
+    ExpenseModel emodel;
     private String message;
-    private String messageError;
+    private boolean isError;
+    private String errorMessage;
     private String[] optionsCategories;
     private String[] optionsSubCategories;
     private String categoriesJson;
@@ -44,7 +47,9 @@ public class ManageExpense extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+        
         cm = new CatModel();
+        emodel = new ExpenseModel();
         optionsCategories = cm.getOptionsCategories();
         optionsSubCategories = cm.getOptionsSubCategories();
         categoriesJson = cm.getCategoriesJson();
@@ -53,10 +58,10 @@ public class ManageExpense extends HttpServlet
         try (PrintWriter out = response.getWriter())
         {
             HtmlPage page = new HtmlPage();
-            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, message);
+            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, isError?errorMessage:message, isError);
             out.println(page.getPage());
         }
-        message = "";
+        message = "";isError = false;
     }
     
     
@@ -90,29 +95,56 @@ public class ManageExpense extends HttpServlet
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        /*amount*/
-        String amount = request.getParameter("amount");
-        double amountDouble = Double.parseDouble(amount);
-        System.out.println("amount=" + amountDouble);
+        String requestType = request.getParameter("requestType");
+        String mainCat = request.getParameter("mainCategory");
+        String subCat = request.getParameter("subCategory");
         
-        /*comment*/
-        String comment = request.getParameter("comment");
-        System.out.println("comment=" + comment);
         
-        /*isExpense*/
-        String isExpense = request.getParameter("isExpense");
-        if(isExpense==null)
+        
+        switch(requestType)
+        {
+            case "requestSaveFrecord":
+                /*get categories*/
+                errorMessage = "";
+                int mainCatId = cm.getCategoryIdByName(mainCat);
+                int subCatId = cm.getSubCategoryIdByName(subCat);
+                if(mainCatId==-1 || subCatId==-1)
                 {
-                    isExpense = "false";
+                    isError = true;
+                    if(mainCatId==-1){errorMessage+=" Kategória nem található!";}
+                    if(subCatId==-1){errorMessage+=" Alkategória nem található!";}
+                    
                 }
-        Boolean isExpenseBoolean = Boolean.parseBoolean(isExpense);
-        System.out.println("isExpense? " + isExpenseBoolean);
-        
-        
-        ExpenseModel model = new ExpenseModel();
-        int dbResponse = model.saveFinancialRecord(new FinancialRecord(amountDouble, isExpenseBoolean, 1, 1, comment, "2023-07-17"));
-        System.out.println("dbResponse: " + dbResponse);
-        message = isExpenseBoolean?"Kiadás":"Bevétel" + " mentése sikeres! Azonosítója: " + dbResponse;
+                else
+                {
+                    /*amount*/
+                    String amount = request.getParameter("amount");
+                    double amountDouble = Double.parseDouble(amount);
+                    System.out.println("amount=" + amountDouble);
+
+                    /*comment*/
+                    String comment = request.getParameter("comment");
+                    System.out.println("comment=" + comment);
+
+                    /*isExpense*/
+                    String isExpense = request.getParameter("isExpense");
+                    if(isExpense==null)
+                            {
+                                isExpense = "false";
+                            }
+                    Boolean isExpenseBoolean = Boolean.parseBoolean(isExpense);
+                    System.out.println("isExpense? " + isExpenseBoolean);
+                    /*date*/
+                    String rDate = request.getParameter("datum");
+                    
+                    int dbResponse = emodel.saveFinancialRecord(new FinancialRecord(amountDouble, isExpenseBoolean, mainCatId, subCatId, comment, rDate));
+                    System.out.println("dbResponse: " + dbResponse);
+                    message = (isExpenseBoolean?" Kiadás":" Bevétel") + " mentése sikeres! Azonosítója: " + dbResponse;
+                }
+                break;
+ 
+        }
+            
         
         
         //processRequest(request, response);

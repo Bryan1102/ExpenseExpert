@@ -396,7 +396,40 @@ public class CatModel
         return categoriesJson;
     }
     
-    
+    public int getCategoryIdByName(String mainCategory)
+    {
+        int parentCatId = -1;
+        if(mainCategory != null)
+        {
+            for(Category c : mainCategories)
+                    {
+                        if(mainCategory.equals(c.getCategoryName()) )
+                        {
+                            parentCatId = c.getId();
+                            break;
+                        }
+                    }
+        }
+        
+        return parentCatId;
+    }
+    public int getSubCategoryIdByName(String subCategory)
+    {
+        int subCatId = -1;
+        if(subCategory != null)
+        {
+            for(SubCategory sc : subCategories)
+                    {
+                        if(subCategory.equals(sc.getCategoryName()) )
+                        {
+                            subCatId = sc.getId();
+                            break;
+                        }
+                    }
+        }
+        
+        return subCatId;
+    }
     
     /* Convert ARRAYLIST TO ARRAYS */
     private void ConvertCategoriesToArray()

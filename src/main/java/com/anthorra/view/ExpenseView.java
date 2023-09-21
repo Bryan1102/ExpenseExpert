@@ -10,7 +10,7 @@ import com.anthorra.html.HtmlPage;
  */
 public class ExpenseView
 {
-    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, String categoriesJson, String message)
+    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, String categoriesJson, String message, Boolean isError)
     {
         String[] dummy = {" - válassz - "};
         
@@ -44,6 +44,26 @@ public class ExpenseView
             
             /* LEFT COLUMN */
             HtmlBodyDiv mainLeftDiv = new HtmlBodyDiv().setDivClass("col-sm-4");
+            
+            /* SUCCESS DIV */
+            HtmlBodyDiv success = new HtmlBodyDiv();
+            if(message != null && !message.isEmpty())
+            {
+                if(isError)
+                {
+                    success.addAttribute("class", "alert alert-warning")
+                        .addParagraph("<strong>Hiba! </strong>" + message);
+                }
+                else
+                {
+                    success.addAttribute("class", "alert alert-success")
+                        .addParagraph("<strong>Sikeres! </strong>" + message);
+                }
+                
+                mainLeftDiv.addNestedDiv(success);
+            }
+            
+            
             row.addNestedDiv(mainLeftDiv);
                     
                 mainLeftDiv
@@ -57,15 +77,18 @@ public class ExpenseView
                                         .addAttribute("name", "isExpense")
                                         .addAttribute("value", "true")
                                         .addAttribute("class", "form-check-input")
+                                        .addAttribute("checked", "checked")
                                         .addLabel("Kiadás?")
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
-                                    .addInputField("number").addAttribute("name", "amount")
+                                    .addInputField("number")
+                                        .addAttribute("name", "amount")
                                         .addAttribute("class", "form-control")
                                         .addAttribute("placeholder", "Összeg")
                                         .addAttribute("max", "9999999999")
                                         .addAttribute("min", "0")
                                         .addAttribute("pattern", "[0-9]{9}")
+                                        .addAttribute("required", "required")
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addInputField("text").addAttribute("name", "comment")
@@ -78,13 +101,26 @@ public class ExpenseView
                                         .addAttribute("class", "form-control")
                                         .addAttribute("name", "mainCategory")
                                         .addAttribute("id", "type")
+                                        .addAttribute("required", "required")
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addSelectList(dummy)
                                         .addAttribute("class", "form-control")
                                         .addAttribute("name", "subCategory")
                                         .addAttribute("id", "subtype")
+                                        .addAttribute("required", "required")
                                         .getParentDiv().getParentDiv()
+                                /*date selector*/
+                                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                                    .addInputField("date")
+                                        .addAttribute("name", "datum")
+                                        .addAttribute("class", "form-control")
+                                        //.addAttribute("placeholder", "")
+                                        .addAttribute("max", "2200-01-01")
+                                        .addAttribute("min", "2000-01-01")
+                                        .addAttribute("required", "required")
+                                        .getParentDiv().getParentDiv()
+                        
                                 /*buttons*/
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addButton("Mentés", "submit")

@@ -1,13 +1,9 @@
 
 package com.anthorra.view;
 
-import com.anthorra.expenseexpert.Category;
-import com.anthorra.expenseexpert.SubCategory;
 import com.anthorra.html.HtmlBodyDiv;
 import com.anthorra.html.HtmlBodySection;
 import com.anthorra.html.HtmlPage;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 
 /**
@@ -20,248 +16,213 @@ public class CategoriesView
     public static HtmlPage getPageCategories(String[] optionsCategories, String[] optionsSubCategories, String[][] categoriesTable, String message)
     {
         
-        /* move to the model */
-        /*String[] optionsCategories = new String[mainCategories.size()];
-        String[] optionsSubCategories = new String[subCategories.size()];
-        String[][] categoriesTable = new String[mainCategories.size() + 1][2];
-                categoriesTable[0][0] = "Főkategóriák";
-                categoriesTable[0][1] = "Alkategóriák";
-            
-            for(int i = 0; i < mainCategories.size(); i++)
-            {
-                categoriesTable[i + 1][0] = mainCategories.get(i).getCategoryName();
-                optionsCategories[i] = mainCategories.get(i).getCategoryName();
-                String subCategoryNames = "";
-                boolean isFirst = false;
-                
-                for(int j = 0; j < subCategories.size(); j++)
-                {
-                    
-                    if(mainCategories.get(i).getId() == subCategories.get(j).getParentId())
-                    {
-                        if(isFirst){subCategoryNames += ", ";}
-                        subCategoryNames += subCategories.get(j).getCategoryName();
-                        isFirst = true;
-                    }
-                }
-                categoriesTable[i + 1][1] = subCategoryNames;
-            }    
-        
-            int i = 0;
-            for(SubCategory sc : subCategories)
-            {
-                optionsSubCategories[i] = sc.getCategoryName();
-                i += 1;
-            }*/
-            
-        
-            HtmlPage page = new HtmlPage();
-            
-            
-            /* HTML HEAD */
-            page.setLang("hu");
-            page.headerTitle("Expense Expert - Kategóriák");
-            page.getHtmlHeader().setStylesheet("https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css");
-            
-            /* HTML BODY */
-                /* HEADER */
-            HtmlBodySection headerSection = PageStandardParts.getPageHeader();
-            page.addBodySection(headerSection);
-            
-                /* NAVBAR */
-            HtmlBodySection navbarSection = PageStandardParts.getPageNavbar();
-            page.addBodySection(navbarSection);
-            
-            /* MAIN */
-            HtmlBodyDiv mainRow = page.addBodySection()
-                            .addSectionHeader("Kategóriák Menedzselése")
-                            .setSectionType("main")
-                            .setSectionStyle("margin:15px")
-                                .addDiv()
-                                    .setDivClass("container")
-                                    .setDivStyle("margin:30px")
-                                    .addNestedDiv().setDivClass("row");
-            
-            
+        HtmlPage page = new HtmlPage();
 
-            
-            /* LEFT COLUMN */
-            HtmlBodyDiv mainLeftDiv = new HtmlBodyDiv(mainRow).setDivClass("col-sm-6");
-            mainRow.addNestedDiv(mainLeftDiv);
-            
-            
-            /* SUCCESS DIV */
-            HtmlBodyDiv success = new HtmlBodyDiv();
-            if(message != null && !message.isEmpty())
-            {
-                success.addAttribute("class", "alert alert-success")
-                        .addParagraph("<strong>Sikeres!</strong>" + message);
-                mainLeftDiv.addNestedDiv(success);
-            }
-            
-            /* Create new category form */
-            HtmlBodyDiv mainCreateDiv = new HtmlBodyDiv();
-            mainCreateDiv.addHeaderText("Új Kategória Létrehozása", 4)
-                .addNestedDiv()
-                    .setIsForm(true)
+
+        /* HTML HEAD */
+        page.setLang("hu");
+        page.headerTitle("Expense Expert - Kategóriák");
+        page.getHtmlHeader().setStylesheet("https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css");
+
+        /* HTML BODY */
+            /* HEADER */
+        HtmlBodySection headerSection = PageStandardParts.getPageHeader();
+        page.addBodySection(headerSection);
+
+            /* NAVBAR */
+        HtmlBodySection navbarSection = PageStandardParts.getPageNavbar();
+        page.addBodySection(navbarSection);
+
+        /* MAIN */
+        HtmlBodyDiv mainRow = page.addBodySection()
+                        .addSectionHeader("Kategóriák Menedzselése")
+                        .setSectionType("main")
+                        .setSectionStyle("margin:15px")
+                            .addDiv()
+                                .setDivClass("container")
+                                .setDivStyle("margin:30px")
+                                .addNestedDiv().setDivClass("row");
+
+
+
+
+        /* LEFT COLUMN */
+        HtmlBodyDiv mainLeftDiv = new HtmlBodyDiv(mainRow).setDivClass("col-sm-6");
+        mainRow.addNestedDiv(mainLeftDiv);
+
+
+        /* SUCCESS DIV */
+        HtmlBodyDiv success = new HtmlBodyDiv();
+        if(message != null && !message.isEmpty())
+        {
+            success.addAttribute("class", "alert alert-success")
+                    .addParagraph("<strong>Sikeres!</strong>" + message);
+            mainLeftDiv.addNestedDiv(success);
+        }
+
+        /* Create new category form */
+        HtmlBodyDiv mainCreateDiv = new HtmlBodyDiv();
+        mainCreateDiv.addHeaderText("Új Kategória Létrehozása", 4)
+            .addNestedDiv()
+                .setIsForm(true)
+                .addAttribute("method", "post")
+                .addAttribute("action", "ManageCategories")
+                .addAttribute("style", "margin:10px")
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addInputField("text")
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "newCategory")
+                        .addAttribute("placeholder", "Új kategória neve")
+                        .addAttribute("required", "required")
+                        .getParentDiv()
+                    .addButton("Mentés", "submit")
+                        .addAttribute("class", "btn btn-success")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "requestNewCategory")
+                        ;
+
+        /* Create new subcategory form */
+        HtmlBodyDiv mainCreateSubDiv = new HtmlBodyDiv();
+        mainCreateSubDiv.addHeaderText("Új Alkategória Létrehozása", 4)
+            .addNestedDiv()
+                .setIsForm(true)
                     .addAttribute("method", "post")
                     .addAttribute("action", "ManageCategories")
                     .addAttribute("style", "margin:10px")
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addInputField("text")
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "newCategory")
-                            .addAttribute("placeholder", "Új kategória neve")
-                            .addAttribute("required", "required")
-                            .getParentDiv()
-                        .addButton("Mentés", "submit")
-                            .addAttribute("class", "btn btn-success")
-                            .addAttribute("name", "requestType")
-                            .addAttribute("value", "requestNewCategory")
-                            ;
-            
-            /* Create new subcategory form */
-            HtmlBodyDiv mainCreateSubDiv = new HtmlBodyDiv();
-            mainCreateSubDiv.addHeaderText("Új Alkategória Létrehozása", 4)
-                .addNestedDiv()
-                    .setIsForm(true)
-                        .addAttribute("method", "post")
-                        .addAttribute("action", "ManageCategories")
-                        .addAttribute("style", "margin:10px")
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addSelectList(optionsCategories)
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "mainCategory")
-                            .getParentDiv().getParentDiv()
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addInputField("text")
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "newSubCategory")
-                            .addAttribute("placeholder", "Új alkategória neve")
-                            .addAttribute("required", "required")
-                            .getParentDiv()
-                        .addButton("Mentés", "submit")
-                            .addAttribute("class", "btn btn-success")
-                            .addAttribute("name", "requestType")
-                            .addAttribute("value", "requestNewSubCategory")
-                            ;
-            
-            /* Rename category form */                    
-            HtmlBodyDiv mainRenameDiv = new HtmlBodyDiv();
-            mainRenameDiv.addHeaderText("Kategória Átnevezése", 4)
-                .addNestedDiv()
-                    .setIsForm(true)
-                        .addAttribute("method", "post")
-                        .addAttribute("action", "ManageCategories")
-                        .addAttribute("style", "margin:10px")
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addSelectList(optionsCategories)
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "mainCategory")
-                            .getParentDiv().getParentDiv()
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addInputField("text")
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "renameCategoryTo")
-                            .addAttribute("placeholder", "Kategória új neve")
-                            .addAttribute("required", "required")
-                            .getParentDiv()
-                        .addButton("Módosítás", "submit")
-                            .addAttribute("class", "btn btn-success")
-                            .addAttribute("name", "requestType")
-                            .addAttribute("value", "requestRenameCategory")
-                            .getParentDiv()
-                            ;
-            
-            /* Rename subcategory form */                    
-            HtmlBodyDiv mainRenameSubDiv = new HtmlBodyDiv();
-            mainRenameSubDiv.addHeaderText("Alkategória Átnevezése", 4)
-                .addNestedDiv()
-                    .setIsForm(true)
-                        .addAttribute("method", "post")
-                        .addAttribute("action", "ManageCategories")
-                        .addAttribute("style", "margin:10px")
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addSelectList(optionsCategories)
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "mainCategory")
-                            .getParentDiv().getParentDiv()
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addSelectList(optionsSubCategories)
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addSelectList(optionsCategories)
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "mainCategory")
+                        .getParentDiv().getParentDiv()
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addInputField("text")
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "newSubCategory")
+                        .addAttribute("placeholder", "Új alkategória neve")
+                        .addAttribute("required", "required")
+                        .getParentDiv()
+                    .addButton("Mentés", "submit")
+                        .addAttribute("class", "btn btn-success")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "requestNewSubCategory")
+                        ;
+
+        /* Rename category form */                    
+        HtmlBodyDiv mainRenameDiv = new HtmlBodyDiv();
+        mainRenameDiv.addHeaderText("Kategória Átnevezése", 4)
+            .addNestedDiv()
+                .setIsForm(true)
+                    .addAttribute("method", "post")
+                    .addAttribute("action", "ManageCategories")
+                    .addAttribute("style", "margin:10px")
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addSelectList(optionsCategories)
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "mainCategory")
+                        .getParentDiv().getParentDiv()
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addInputField("text")
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "renameCategoryTo")
+                        .addAttribute("placeholder", "Kategória új neve")
+                        .addAttribute("required", "required")
+                        .getParentDiv()
+                    .addButton("Módosítás", "submit")
+                        .addAttribute("class", "btn btn-success")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "requestRenameCategory")
+                        .getParentDiv()
+                        ;
+
+        /* Rename subcategory form */                    
+        HtmlBodyDiv mainRenameSubDiv = new HtmlBodyDiv();
+        mainRenameSubDiv.addHeaderText("Alkategória Átnevezése", 4)
+            .addNestedDiv()
+                .setIsForm(true)
+                    .addAttribute("method", "post")
+                    .addAttribute("action", "ManageCategories")
+                    .addAttribute("style", "margin:10px")
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addSelectList(optionsCategories)
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "mainCategory")
+                        .getParentDiv().getParentDiv()
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addSelectList(optionsSubCategories)
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "subCategory")
+                        .getParentDiv().getParentDiv()
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addInputField("text")
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "renameSubCategoryTo")
+                        .addAttribute("placeholder", "Alkategória új neve")
+                        .addAttribute("required", "required")
+                        .getParentDiv()
+                    .addButton("Módosítás", "submit")
+                        .addAttribute("class", "btn btn-success")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "requestRenameSubCategory")
+                        .getParentDiv()
+                    ;
+
+        /* DELETE subcategory form */                    
+        HtmlBodyDiv mainDeleteDiv = new HtmlBodyDiv();
+        mainDeleteDiv.addHeaderText("Kategória Törlése", 4)
+            .addNestedDiv()
+                .setIsForm(true)
+                    .addAttribute("method", "post")
+                    .addAttribute("action", "ManageCategories")
+                    .addAttribute("style", "margin:10px")
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addSelectList(optionsCategories)
+                        .addAttribute("class", "form-control")
+                        .addAttribute("name", "mainCategory")
+                        .getParentDiv()
+                    .addButton("Törlés", "submit")
+                        .addAttribute("class", "btn btn-danger")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "requestDeleteCategory")
+                        .getParentDiv().getParentDiv()
+            .addNestedDiv()
+                .setIsForm(true)
+                .addNestedDiv().addAttribute("class", "input-group mb-3")
+                    .addSelectList(optionsSubCategories)
                             .addAttribute("class", "form-control")
                             .addAttribute("name", "subCategory")
-                            .getParentDiv().getParentDiv()
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addInputField("text")
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "renameSubCategoryTo")
-                            .addAttribute("placeholder", "Alkategória új neve")
-                            .addAttribute("required", "required")
-                            .getParentDiv()
-                        .addButton("Módosítás", "submit")
-                            .addAttribute("class", "btn btn-success")
-                            .addAttribute("name", "requestType")
-                            .addAttribute("value", "requestRenameSubCategory")
-                            .getParentDiv()
-                        ;
-            
-            /* DELETE subcategory form */                    
-            HtmlBodyDiv mainDeleteDiv = new HtmlBodyDiv();
-            mainDeleteDiv.addHeaderText("Kategória Törlése", 4)
-                .addNestedDiv()
-                    .setIsForm(true)
-                        .addAttribute("method", "post")
-                        .addAttribute("action", "ManageCategories")
-                        .addAttribute("style", "margin:10px")
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addSelectList(optionsCategories)
-                            .addAttribute("class", "form-control")
-                            .addAttribute("name", "mainCategory")
-                            .getParentDiv()
-                        .addButton("Törlés", "submit")
+                            .getParentDiv()//.getParentDiv()  
+                    .addButton("Törlés", "submit")
                             .addAttribute("class", "btn btn-danger")
                             .addAttribute("name", "requestType")
-                            .addAttribute("value", "requestDeleteCategory")
+                            .addAttribute("value", "requestDeleteSubCategory")
                             .getParentDiv().getParentDiv()
-                .addNestedDiv()
-                    .setIsForm(true)
-                    .addNestedDiv().addAttribute("class", "input-group mb-3")
-                        .addSelectList(optionsSubCategories)
-                                .addAttribute("class", "form-control")
-                                .addAttribute("name", "subCategory")
-                                .getParentDiv()//.getParentDiv()  
-                        .addButton("Törlés", "submit")
-                                .addAttribute("class", "btn btn-danger")
-                                .addAttribute("name", "requestType")
-                                .addAttribute("value", "requestDeleteSubCategory")
-                                .getParentDiv().getParentDiv()
-                    ;
-            
-            
-            mainLeftDiv.addNestedDiv(mainCreateDiv);
-            mainLeftDiv.addNestedDiv(mainCreateSubDiv);
-            mainLeftDiv.addNestedDiv(mainRenameDiv);
-            mainLeftDiv.addNestedDiv(mainRenameSubDiv);
-            mainLeftDiv.addNestedDiv(mainDeleteDiv);
-                                
-                                
-            /* RIGHT COLUMN */    
-            HtmlBodyDiv mainRightDiv = new HtmlBodyDiv(mainRow).setDivClass("col-sm-6");
-            mainRow.addNestedDiv(mainRightDiv);
-            /* CATEGORY LIST */            
-            HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
-                        .addHeaderText("Meglévő Kategóriák listája", 4)
-                        ;   
-            
-            
-            
-            mainListDiv.addTable(categoriesTable, true)
-                    .addAttribute("style", "width:100%")
-                    .addAttribute("class", "table table-hover"); 
-            mainRightDiv.addNestedDiv(mainListDiv);
+                ;
 
-             
-            return page;
+
+        mainLeftDiv.addNestedDiv(mainCreateDiv);
+        mainLeftDiv.addNestedDiv(mainCreateSubDiv);
+        mainLeftDiv.addNestedDiv(mainRenameDiv);
+        mainLeftDiv.addNestedDiv(mainRenameSubDiv);
+        mainLeftDiv.addNestedDiv(mainDeleteDiv);
+
+
+        /* RIGHT COLUMN */    
+        HtmlBodyDiv mainRightDiv = new HtmlBodyDiv(mainRow).setDivClass("col-sm-6");
+        mainRow.addNestedDiv(mainRightDiv);
+        /* CATEGORY LIST */            
+        HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
+                    .addHeaderText("Meglévő Kategóriák listája", 4)
+                    ;   
+
+
+
+        mainListDiv.addTable(categoriesTable, true)
+                .addAttribute("style", "width:100%")
+                .addAttribute("class", "table table-hover"); 
+        mainRightDiv.addNestedDiv(mainListDiv);
+
+
+        return page;
     }
              
 }
