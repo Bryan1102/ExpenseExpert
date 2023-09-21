@@ -1,7 +1,6 @@
 
 package com.anthorra.html;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -13,9 +12,12 @@ public class HtmlTable extends HtmlBodyElement
     private int columns;
     private String[][] data;
     private String style;
-    //private ArrayList<String[]> rows;
     private boolean hasHeader;
     private HashMap<String, String> attr;
+    
+    /*add capability to add buttons, links etc. to table*/
+    private HtmlBodyDiv nestedDiv;
+    private String heading;
  
     
     /* CONSTRUCTOR */
@@ -26,19 +28,8 @@ public class HtmlTable extends HtmlBodyElement
         this.columns = inputTable[0].length + 1;
         this.hasHeader = hasHeader;
         this.attr = new HashMap<String, String>();
-        //this.rows = new ArrayList<String[]>();
+        
     }
-
-//    public HtmlTable addRow(String[] tableRow)
-//    {
-//        String[] row = new String[this.columns-1];
-//        for(int i = 0; i < this.columns-1; i++)
-//        {row[i] =  tableRow[i];}
-//        rows.add(row);
-//        return this;
-//    }
-    
-    
     
     @Override
     String contructElement()
@@ -61,6 +52,7 @@ public class HtmlTable extends HtmlBodyElement
                 {
                     table += "<th>" + h + "</th>";
                 }
+                if(nestedDiv!=null){table += "<th>" + heading + "</th>";}
             }
             else
             {
@@ -74,12 +66,12 @@ public class HtmlTable extends HtmlBodyElement
             table += "</tr>";
 
             /* add table rows*/
-            //if(this.rows != null)
             {
                 
                 if(hasHeader){i++;}
                 for(int k = i; k < data.length; k++)
                 {
+                    /* open table row */
                     table += "<tr>";
                     for(String td : data[k])
                     {
@@ -87,9 +79,19 @@ public class HtmlTable extends HtmlBodyElement
                         table += td;
                         table += "</td>";
                     }
-
+                        
+                        /*adding the last column - nested div*/
+                        if(nestedDiv!=null)
+                        {
+                            table += "<td>";
+                            table += nestedDiv.getDiv();
+                            table += "</td>";
+                        }
+                    
+                    /* close table row */
                     table += "</tr>";
                 }
+                
             }
         }
         
@@ -103,4 +105,12 @@ public class HtmlTable extends HtmlBodyElement
         return this;
     }
     
+    public HtmlTable addNestedDiv(HtmlBodyDiv div, String heading)
+    {
+        this.nestedDiv = div;
+        if(heading.isEmpty()){heading="edit";}
+        else{this.heading = heading;}
+        
+        return this;
+    }
 }

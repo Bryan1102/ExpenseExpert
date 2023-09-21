@@ -4,6 +4,7 @@ package com.anthorra.view;
 import com.anthorra.html.HtmlBodyDiv;
 import com.anthorra.html.HtmlBodySection;
 import com.anthorra.html.HtmlPage;
+import java.util.HashSet;
 /**
  *
  * @author Anthorra
@@ -131,12 +132,10 @@ public class ExpenseView
                                     .addButton("Reset", "reset")
                                         .addAttribute("class", "btn btn-secondary")
                                         .getParentDiv()
-                                    
+                                    ;
+            
+                            
                         
-                        
-                        
-                        
-                        ;
             /* RIGHT COLUMN */   
             HtmlBodyDiv mainRightDiv = new HtmlBodyDiv().setDivClass("col-sm-9");
             row.addNestedDiv(mainRightDiv);
@@ -188,4 +187,25 @@ public class ExpenseView
         return jsCascade;
     }
 
+    public HtmlBodyDiv getExpenseModal()
+    {
+        HtmlBodyDiv modal = new HtmlBodyDiv();
+        modal.setDivClass("modal").addAttribute("id", "frModal");
+        
+        HtmlBodyDiv modalMain = modal.addNestedDiv().setDivClass("modal-dialog")
+                .addNestedDiv().setDivClass("modal-content");
+                
+        HtmlBodyDiv modalHead = new HtmlBodyDiv().setDivClass("modal-header")
+                .addHeaderText("Ez a modal header", 4, "modal-title")
+                .addButton("&times;", "button")
+                    .addAttribute("class", "close")
+                    .addAttribute("data-dismiss", "modal")
+                    .getParentDiv();
+        
+                
+        
+        modalMain.addNestedDiv(modalHead);
+        
+        return modal;
+    }
 }

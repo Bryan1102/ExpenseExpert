@@ -27,7 +27,7 @@ public class ManageExpense extends HttpServlet
 {
     
     private CatModel cm;
-    ExpenseModel emodel;
+    private ExpenseModel emodel;
     private String message;
     private boolean isError;
     private String errorMessage;

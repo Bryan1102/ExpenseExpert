@@ -11,7 +11,7 @@ public class FinancialRecord
 {
     private double amount;
     private boolean isExpense;
-    private int type, subtype;
+    private int type, subtype, id;
     private String realizedDate;
     private String comment;
 
@@ -24,6 +24,7 @@ public class FinancialRecord
         this.subtype = subtype;
         this.comment = comment;
         this.realizedDate = realizedDate;
+        this.id = 0;
         
     }
 
@@ -34,7 +35,8 @@ public class FinancialRecord
     public int getSubtype()    {        return subtype;    }
     public String getComment()    {        return comment;    }
     public String getRealizedDate()    {        return realizedDate;    }
-
+    public int getId()    {        return id;    }
+    
     /* SETTER SECTION */
     public void setAmount(double amount)    {        this.amount = amount;    }
     public void setIsExpense(boolean isExpense)    {        this.isExpense = isExpense;    }
@@ -42,7 +44,9 @@ public class FinancialRecord
     public void setSubtype(int subtype)    {        this.subtype = subtype;    }
     public void setRealizedDate(String realizedDate)    {        this.realizedDate = realizedDate;    }
     public void setComment(String comment)    {        this.comment = comment;    }
-
+    public void setId(int id)    {        this.id = id;    }
+    
+    
     @Override
     public String toString()
     {

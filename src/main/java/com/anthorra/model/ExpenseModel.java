@@ -5,6 +5,7 @@ import com.anthorra.expenseexpert.FinancialRecord;
 import java.sql.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  *
@@ -18,7 +19,7 @@ public class ExpenseModel
     /* CONSTRUCTOR */
     public ExpenseModel()
     {
-        this.frList = new ArrayList<FinancialRecord>();
+        this.frList = new ArrayList<>();
         
     }
     
@@ -91,7 +92,7 @@ public class ExpenseModel
         {
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
             
-            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, fr.REALIZED_DATE\n" +
+            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, fr.REALIZED_DATE, fr.ID\n" +
                            "FROM [expenseexpert].[dbo].[financialrecords] fr";
             
             // Obtain a statement
@@ -106,10 +107,8 @@ public class ExpenseModel
                                         rs.getInt(3),
                                         rs.getInt(4),
                                         rs.getString(5),
-                                        rs.getString(6)
-                );
-                
-                //System.out.println(c);
+                                        rs.getString(6));
+                fr.setId(rs.getInt(7));
                 frList.add(fr);
             }
             // Closing the connection as per the requirement with connection is completed
@@ -137,24 +136,30 @@ public class ExpenseModel
     }
     private void ConvertArrayToTable()
     {
-        this.frListAsTable = new String[frList.size() + 1][6];
+        String test ="<form method=\"post\" action=\"ManageExpense\"><button class=\"btn btn-danger\" name=\"requestType\" type=\"submit\" value=\"requestDeleteFrecord\">DEL</button></form>";            
+            
         
-        frListAsTable[0][0] = "Dátum";
-        frListAsTable[0][1] = "Összeg";
-        frListAsTable[0][2] = "Kiadás/Bevétel";
-        frListAsTable[0][3] = "Kategória";
-        frListAsTable[0][4] = "Alkategória";
-        frListAsTable[0][5] = "Komment";
+        this.frListAsTable = new String[frList.size() + 1][7];
+        
+        frListAsTable[0][0] = "Azonostó";
+        frListAsTable[0][1] = "Dátum";
+        frListAsTable[0][2] = "Összeg";
+        frListAsTable[0][3] = "Kiadás/Bevétel";
+        frListAsTable[0][4] = "Kategória";
+        frListAsTable[0][5] = "Alkategória";
+        frListAsTable[0][6] = "Komment";
+        
         
         int i = 1;
         for(FinancialRecord fr : frList)
         {
-            frListAsTable[i][0] = fr.getRealizedDate();
-            frListAsTable[i][1] = String.valueOf(fr.getAmount());
-            frListAsTable[i][2] = fr.isIsExpense()?"Kiadás":"Bevétel";
-            frListAsTable[i][3] = String.valueOf(fr.getType());
-            frListAsTable[i][4] = String.valueOf(fr.getSubtype());
-            frListAsTable[i][5] = fr.getComment();
+            frListAsTable[i][0] = String.valueOf(fr.getId());
+            frListAsTable[i][1] = fr.getRealizedDate();
+            frListAsTable[i][2] = String.valueOf(fr.getAmount());
+            frListAsTable[i][3] = fr.isIsExpense()?"Kiadás":"Bevétel";
+            frListAsTable[i][4] = String.valueOf(fr.getType());
+            frListAsTable[i][5] = String.valueOf(fr.getSubtype());
+            frListAsTable[i][6] = fr.getComment();
             i++;        
         }
     }
