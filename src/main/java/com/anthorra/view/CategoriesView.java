@@ -16,11 +16,12 @@ import java.util.HashSet;
  */
 public class CategoriesView
 {
-    public static HtmlPage getPageCategories(ArrayList<Category> mainCategories, ArrayList<SubCategory> subCategories, String message)
+    //public static HtmlPage getPageCategories(ArrayList<Category> mainCategories, ArrayList<SubCategory> subCategories, String message)
+    public static HtmlPage getPageCategories(String[] optionsCategories, String[] optionsSubCategories, String[][] categoriesTable, String message)
     {
         
         /* move to the model */
-        String[] optionsCategories = new String[mainCategories.size()];
+        /*String[] optionsCategories = new String[mainCategories.size()];
         String[] optionsSubCategories = new String[subCategories.size()];
         String[][] categoriesTable = new String[mainCategories.size() + 1][2];
                 categoriesTable[0][0] = "Főkategóriák";
@@ -51,7 +52,7 @@ public class CategoriesView
             {
                 optionsSubCategories[i] = sc.getCategoryName();
                 i += 1;
-            }
+            }*/
             
         
             HtmlPage page = new HtmlPage();

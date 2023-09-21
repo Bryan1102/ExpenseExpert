@@ -50,7 +50,7 @@ public class ExpenseView
                     .addNestedDiv().addHeaderText("Új Költség / Bevétel Létrehozása", 4)
                         .addNestedDiv().setIsForm(true)
                             .addAttribute("method", "post")
-                            .addAttribute("action", "AddExpense")
+                            .addAttribute("action", "ManageExpense")
                             .addAttribute("style", "margin:10px")
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addInputField("checkbox")

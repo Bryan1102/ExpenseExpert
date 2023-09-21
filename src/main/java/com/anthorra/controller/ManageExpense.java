@@ -1,8 +1,10 @@
 
 package com.anthorra.controller;
 
+import com.anthorra.expenseexpert.FinancialRecord;
 import com.anthorra.html.HtmlPage;
 import com.anthorra.model.CatModel;
+import com.anthorra.model.ExpenseModel;
 import com.anthorra.view.ExpenseView;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -88,7 +90,33 @@ public class ManageExpense extends HttpServlet
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        processRequest(request, response);
+        /*amount*/
+        String amount = request.getParameter("amount");
+        double amountDouble = Double.parseDouble(amount);
+        System.out.println("amount=" + amountDouble);
+        
+        /*comment*/
+        String comment = request.getParameter("comment");
+        System.out.println("comment=" + comment);
+        
+        /*isExpense*/
+        String isExpense = request.getParameter("isExpense");
+        if(isExpense==null)
+                {
+                    isExpense = "false";
+                }
+        Boolean isExpenseBoolean = Boolean.parseBoolean(isExpense);
+        System.out.println("isExpense? " + isExpenseBoolean);
+        
+        
+        ExpenseModel model = new ExpenseModel();
+        int dbResponse = model.saveFinancialRecord(new FinancialRecord(amountDouble, isExpenseBoolean, 1, 1, comment, "2023-07-17"));
+        System.out.println("dbResponse: " + dbResponse);
+        message = isExpenseBoolean?"Kiadás":"Bevétel" + " mentése sikeres! Azonosítója: " + dbResponse;
+        
+        
+        //processRequest(request, response);
+        response.sendRedirect("ManageExpense");
     }
 
     /**

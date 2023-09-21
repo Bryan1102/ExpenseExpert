@@ -28,7 +28,9 @@ public class ManageCategories extends HttpServlet
     private ArrayList<Category> mainCategories;
     private ArrayList<SubCategory> subCategories;
     private CatModel cm;
-    
+    private String[] optionsCategories;
+    private String[] optionsSubCategories;
+    private String[][] categoriesTable;
     private String message;
     private String messageError;
     
@@ -47,6 +49,9 @@ public class ManageCategories extends HttpServlet
         cm = new CatModel();
         mainCategories = cm.getMainCategories();
         subCategories = cm.getSubCategories();
+        optionsCategories = cm.getOptionsCategories();
+        optionsSubCategories = cm.getOptionsSubCategories();
+        categoriesTable = cm.getCategoriesTable();
         
         response.setContentType("text/html;charset=UTF-8");
         
@@ -54,7 +59,7 @@ public class ManageCategories extends HttpServlet
         {
             
             HtmlPage page = new HtmlPage();
-            page = CategoriesView.getPageCategories(mainCategories, subCategories, message);
+            page = CategoriesView.getPageCategories(optionsCategories, optionsSubCategories, categoriesTable, message);
             
             out.println(page.getPage());
             
@@ -63,25 +68,6 @@ public class ManageCategories extends HttpServlet
         message = "";
     }
     
-    //////////////////////////////////////////////////////////////////////////// 
-    /* JAVASCRIPT */
-    private String getJsCaret()
-    {
-        String jsCaret = "var toggler = document.getElementsByClassName(\"caret\");\n" +
-                        "var i;\n" +
-                        "\n" +
-                        "for (i = 0; i < toggler.length; i++) {\n" +
-                        "  toggler[i].addEventListener(\"click\", function() \n" +
-                        "  {\n" +
-                        "    this.parentElement.querySelector(\".nested\").classList.toggle(\"active\");\n" +
-                        "    this.classList.toggle(\"caret-down\");\n" +
-                        "  });\n" +
-                        "} ";
-        
-        return jsCaret;
-    }
-    
-    //////////////////////////////////////////////////////////////////////////// 
     /* GET */
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
