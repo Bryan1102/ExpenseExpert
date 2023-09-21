@@ -4,6 +4,7 @@ import com.anthorra.db.DbConnection;
 import com.anthorra.expenseexpert.FinancialRecord;
 import java.sql.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
@@ -11,14 +12,23 @@ import java.sql.SQLException;
  */
 public class ExpenseModel
 {
+    private ArrayList<FinancialRecord> frList;
+    private String[][] frListAsTable;
+    
+    /* CONSTRUCTOR */
+    public ExpenseModel()
+    {
+        this.frList = new ArrayList<FinancialRecord>();
+        
+    }
+    
+    
     
     public int saveFinancialRecord(FinancialRecord fr)
     {
         int retVal = -1;
         Connection con = null;
         PreparedStatement st = null;
-        
-        System.out.println(fr.getRealizedDate());
         
         try
         {
@@ -62,5 +72,90 @@ public class ExpenseModel
             try{con.close();} catch (SQLException ex){}
         }
         return retVal;
+    }
+
+    
+    
+    public ArrayList<FinancialRecord> getFrList()
+    {
+        getFinancialRecords(2023, 9);
+        return frList;
+    }
+    private void getFinancialRecords(int year, int month)
+    {
+        int retVal = -1;
+        Connection con = null;
+        Statement stmt = null;
+        
+        try
+        {
+            con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
+            
+            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, fr.REALIZED_DATE\n" +
+                           "FROM [expenseexpert].[dbo].[financialrecords] fr";
+            
+            // Obtain a statement
+            stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(v_sql);
+            
+            // Execute the query
+            while(rs.next())
+            {
+                FinancialRecord fr = new FinancialRecord(rs.getDouble(1), 
+                                        (rs.getInt(2)==1),
+                                        rs.getInt(3),
+                                        rs.getInt(4),
+                                        rs.getString(5),
+                                        rs.getString(6)
+                );
+                
+                //System.out.println(c);
+                frList.add(fr);
+            }
+            // Closing the connection as per the requirement with connection is completed
+            con.close();
+            
+        } 
+        catch (SQLException ex)
+        {
+            /*Logger.getLogger(DBHandler.class.getName()).log(Level.SEVERE, null, ex);*/
+            System.out.println(ex);
+        }
+        finally
+        {
+            try{stmt.close();} catch (SQLException ex){}
+            try{con.close();} catch (SQLException ex){}
+        }
+        
+        
+    }
+
+    public String[][] getFrListAsTable()
+    {
+        ConvertArrayToTable();
+        return frListAsTable;
+    }
+    private void ConvertArrayToTable()
+    {
+        this.frListAsTable = new String[frList.size() + 1][6];
+        
+        frListAsTable[0][0] = "Dátum";
+        frListAsTable[0][1] = "Összeg";
+        frListAsTable[0][2] = "Kiadás/Bevétel";
+        frListAsTable[0][3] = "Kategória";
+        frListAsTable[0][4] = "Alkategória";
+        frListAsTable[0][5] = "Komment";
+        
+        int i = 1;
+        for(FinancialRecord fr : frList)
+        {
+            frListAsTable[i][0] = fr.getRealizedDate();
+            frListAsTable[i][1] = String.valueOf(fr.getAmount());
+            frListAsTable[i][2] = fr.isIsExpense()?"Kiadás":"Bevétel";
+            frListAsTable[i][3] = String.valueOf(fr.getType());
+            frListAsTable[i][4] = String.valueOf(fr.getSubtype());
+            frListAsTable[i][5] = fr.getComment();
+            i++;        
+        }
     }
 }

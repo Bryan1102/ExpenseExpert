@@ -10,7 +10,7 @@ import com.anthorra.html.HtmlPage;
  */
 public class ExpenseView
 {
-    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, String categoriesJson, String message, Boolean isError)
+    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, String categoriesJson, String[][] frTable, String message, Boolean isError)
     {
         String[] dummy = {" - válassz - "};
         
@@ -43,7 +43,7 @@ public class ExpenseView
             mainSection.addDiv(row);
             
             /* LEFT COLUMN */
-            HtmlBodyDiv mainLeftDiv = new HtmlBodyDiv().setDivClass("col-sm-4");
+            HtmlBodyDiv mainLeftDiv = new HtmlBodyDiv().setDivClass("col-sm-3");
             
             /* SUCCESS DIV */
             HtmlBodyDiv success = new HtmlBodyDiv();
@@ -138,11 +138,17 @@ public class ExpenseView
                         
                         ;
             /* RIGHT COLUMN */   
-            HtmlBodyDiv mainRightDiv = new HtmlBodyDiv().setDivClass("col-sm-8");
+            HtmlBodyDiv mainRightDiv = new HtmlBodyDiv().setDivClass("col-sm-9");
             row.addNestedDiv(mainRightDiv);
-                mainRightDiv.addParagraph("ez a jobb oldal lesz");
                 
-                
+            /* FIN.Record LIST */            
+            HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
+                        .addHeaderText("Meglévő Kategóriák listája", 4)
+                        ;   
+            mainListDiv.addTable(frTable, true)
+                    .addAttribute("style", "width:100%")
+                    .addAttribute("class", "table table-hover"); 
+            mainRightDiv.addNestedDiv(mainListDiv);
                 
                 
                 

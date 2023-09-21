@@ -213,9 +213,6 @@ public class CategoriesView
         HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
                     .addHeaderText("Meglévő Kategóriák listája", 4)
                     ;   
-
-
-
         mainListDiv.addTable(categoriesTable, true)
                 .addAttribute("style", "width:100%")
                 .addAttribute("class", "table table-hover"); 

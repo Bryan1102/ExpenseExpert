@@ -34,6 +34,7 @@ public class ManageExpense extends HttpServlet
     private String[] optionsCategories;
     private String[] optionsSubCategories;
     private String categoriesJson;
+    private String[][] frTable;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -53,12 +54,14 @@ public class ManageExpense extends HttpServlet
         optionsCategories = cm.getOptionsCategories();
         optionsSubCategories = cm.getOptionsSubCategories();
         categoriesJson = cm.getCategoriesJson();
+        emodel.getFrList();
+        frTable = emodel.getFrListAsTable();
         
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter())
         {
             HtmlPage page = new HtmlPage();
-            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, isError?errorMessage:message, isError);
+            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError);
             out.println(page.getPage());
         }
         message = "";isError = false;
