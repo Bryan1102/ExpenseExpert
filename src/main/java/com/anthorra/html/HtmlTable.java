@@ -84,7 +84,7 @@ public class HtmlTable extends HtmlBodyElement
                         if(nestedDiv!=null)
                         {
                             table += "<td>";
-                            table += nestedDiv.getDiv();
+                            table += nestedDiv.getDiv().replace("#Edit#", "Edit="+data[k][0]);
                             table += "</td>";
                         }
                     

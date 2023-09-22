@@ -12,6 +12,7 @@ public class HtmlSelectList extends HtmlBodyElement
     private HashMap<String, String> attr;
     private String[] options;
     private HtmlBodyDiv parentDiv;
+    private String selected;
     
     public HtmlSelectList(String[] options, HtmlBodyDiv parentDiv)
     {
@@ -30,10 +31,23 @@ public class HtmlSelectList extends HtmlBodyElement
             {select += SupportFunctions.decodeAttributes(attr);}
         select += ">";
         
+        //select += "<option value=\"\" disabled hidden>Kérlek Válassz</option>"; /*nem működik?*/
+        //value hozzáadható????
+        //<option value="1">One</option>
+        //<option value="2">Two</option>
+        
         for(String o : options)
         {
-            select += "<option>";
+            if(o.equals(selected))
+            {
+                select += "<option selected>";
+            }
+            else
+            {
+                select += "<option>";
+            }
             select += o;
+            
             select += "</option>";
         }
         
@@ -50,5 +64,10 @@ public class HtmlSelectList extends HtmlBodyElement
         public HtmlBodyDiv getParentDiv()
     {
         return parentDiv;
+    }
+    public HtmlSelectList setSelectedOption(String selected)
+    {
+        this.selected = selected;
+        return this;
     }
 }

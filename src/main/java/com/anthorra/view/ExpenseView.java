@@ -1,19 +1,23 @@
 
 package com.anthorra.view;
 
+import com.anthorra.expenseexpert.FinancialRecord;
 import com.anthorra.html.HtmlBodyDiv;
 import com.anthorra.html.HtmlBodySection;
 import com.anthorra.html.HtmlPage;
-import java.util.HashSet;
 /**
  *
  * @author Anthorra
  */
 public class ExpenseView
 {
-    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, String categoriesJson, String[][] frTable, String message, Boolean isError)
+    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, 
+                                        String categoriesJson, String[][] frTable, 
+                                        String message, Boolean isError, FinancialRecord fr, 
+                                        String editCat, String editSubCat)
     {
         String[] dummy = {" - válassz - "};
+        boolean isEdit = fr!=null;
         
         HtmlPage page = new HtmlPage();
             
@@ -21,7 +25,8 @@ public class ExpenseView
         page.setLang("hu");
         page.headerTitle("Expense Expert - Kiadások");
         page.getHtmlHeader().setStylesheet("https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css");
-        page.getHtmlHeader().setjScript(getCascadeJs(categoriesJson));
+        //page.getHtmlHeader().setjScript(getCascadeJs(categoriesJson));
+        
 
         /* HTML BODY */
             /* HEADER */
@@ -66,9 +71,11 @@ public class ExpenseView
             
             
             row.addNestedDiv(mainLeftDiv);
-                    
+                  
+            
                 mainLeftDiv
-                    .addNestedDiv().addHeaderText("Új Költség / Bevétel Létrehozása", 4)
+                    .addNestedDiv()
+                        .addHeaderText("Új Költség / Bevétel Létrehozása", 4)
                         .addNestedDiv().setIsForm(true)
                             .addAttribute("method", "post")
                             .addAttribute("action", "ManageExpense")
@@ -90,26 +97,30 @@ public class ExpenseView
                                         .addAttribute("min", "0")
                                         .addAttribute("pattern", "[0-9]{9}")
                                         .addAttribute("required", "required")
+                                        .addAttribute("value", isEdit?String.valueOf(fr.getAmount()):"0")
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addInputField("text").addAttribute("name", "comment")
                                     .addAttribute("class", "form-control")
                                     .addAttribute("placeholder", "komment")
+                                    .addAttribute("value", isEdit?fr.getComment():"")
                                     .getParentDiv().getParentDiv()
                                 /*select lists*/
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
-                                    .addSelectList(dummy)
+                                    .addSelectList(optionsCategories)
                                         .addAttribute("class", "form-control")
                                         .addAttribute("name", "mainCategory")
                                         .addAttribute("id", "type")
                                         .addAttribute("required", "required")
+                                        .setSelectedOption(isEdit?editCat:"")
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
-                                    .addSelectList(dummy)
+                                    .addSelectList(optionsSubCategories)
                                         .addAttribute("class", "form-control")
                                         .addAttribute("name", "subCategory")
                                         .addAttribute("id", "subtype")
                                         .addAttribute("required", "required")
+                                        .setSelectedOption(isEdit?editSubCat:"")
                                         .getParentDiv().getParentDiv()
                                 /*date selector*/
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
@@ -120,6 +131,7 @@ public class ExpenseView
                                         .addAttribute("max", "2200-01-01")
                                         .addAttribute("min", "2000-01-01")
                                         .addAttribute("required", "required")
+                                        .addAttribute("value", isEdit?fr.getRealizedDate():"")
                                         .getParentDiv().getParentDiv()
                         
                                 /*buttons*/
@@ -139,25 +151,41 @@ public class ExpenseView
             /* RIGHT COLUMN */   
             HtmlBodyDiv mainRightDiv = new HtmlBodyDiv().setDivClass("col-sm-9");
             row.addNestedDiv(mainRightDiv);
-                
+            
+            /* Create subDiv for Table */
+            HtmlBodyDiv tableButton = new HtmlBodyDiv()
+                    .setIsForm(true)
+                        .addAttribute("method", "post")
+                        .addAttribute("action", "ManageExpense")
+                    .addButton("Edit", "submit")
+                        .addAttribute("class", "btn btn-info")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "#Edit#")
+                        .getParentDiv();
+            
             /* FIN.Record LIST */            
             HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
                         .addHeaderText("Meglévő Kategóriák listája", 4)
                         ;   
             mainListDiv.addTable(frTable, true)
                     .addAttribute("style", "width:100%")
-                    .addAttribute("class", "table table-hover"); 
+                    .addAttribute("class", "table table-hover")
+                    .addAttribute("id", "frTable")
+                    .addNestedDiv(tableButton, "Szerkesztés"); 
             mainRightDiv.addNestedDiv(mainListDiv);
                 
                 
-                
+            //mainSection.addDiv(getExpenseModal());
                 
                 page.addBodySection(mainSection);
         return page;
         
     }
     
+    
+    
 
+    
     private static String getCascadeJs(String categoriesJson)
     {
         String jsCascade = "var subjectObject = \n" +
@@ -187,25 +215,5 @@ public class ExpenseView
         return jsCascade;
     }
 
-    public HtmlBodyDiv getExpenseModal()
-    {
-        HtmlBodyDiv modal = new HtmlBodyDiv();
-        modal.setDivClass("modal").addAttribute("id", "frModal");
-        
-        HtmlBodyDiv modalMain = modal.addNestedDiv().setDivClass("modal-dialog")
-                .addNestedDiv().setDivClass("modal-content");
-                
-        HtmlBodyDiv modalHead = new HtmlBodyDiv().setDivClass("modal-header")
-                .addHeaderText("Ez a modal header", 4, "modal-title")
-                .addButton("&times;", "button")
-                    .addAttribute("class", "close")
-                    .addAttribute("data-dismiss", "modal")
-                    .getParentDiv();
-        
-                
-        
-        modalMain.addNestedDiv(modalHead);
-        
-        return modal;
-    }
+    
 }

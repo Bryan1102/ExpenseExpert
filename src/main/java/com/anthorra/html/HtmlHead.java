@@ -1,6 +1,8 @@
 
 package com.anthorra.html;
 
+import java.util.ArrayList;
+
 
 public class HtmlHead
 {
@@ -9,6 +11,14 @@ public class HtmlHead
     private String charset;
     private String stylesheet;
     private String jScript;
+    private ArrayList<String> scripts;
+
+    public HtmlHead()
+    {
+        scripts = new ArrayList<>();
+    }
+    
+    
     
     private String constructHeader()
     {
@@ -19,6 +29,14 @@ public class HtmlHead
         header += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">";
         if(stylesheet != null){header += "<link rel=\"stylesheet\" href=\"" + stylesheet + "\">";}
         if(jScript != null){header += "<script>" + jScript + "</script>";}
+        if(scripts != null)
+        {
+            for(String script : scripts)
+            {
+                header += "<script src=\"" + script + "\"></script>";
+            }
+            
+        }
         header += "</head>";
         
         return header;
@@ -65,6 +83,13 @@ public class HtmlHead
         }
         
     }
-
+    
+    public void addScriptSrc(String script)
+    {
+        if(script != null)
+        {
+            this.scripts.add(script);
+        }
+    }
     
 }

@@ -5,7 +5,6 @@ import com.anthorra.expenseexpert.FinancialRecord;
 import java.sql.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  *
@@ -22,8 +21,6 @@ public class ExpenseModel
         this.frList = new ArrayList<>();
         
     }
-    
-    
     
     public int saveFinancialRecord(FinancialRecord fr)
     {
@@ -92,7 +89,7 @@ public class ExpenseModel
         {
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
             
-            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, fr.REALIZED_DATE, fr.ID\n" +
+            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, CONVERT(VARCHAR, fr.REALIZED_DATE, 23), fr.ID\n" +
                            "FROM [expenseexpert].[dbo].[financialrecords] fr";
             
             // Obtain a statement
@@ -162,5 +159,18 @@ public class ExpenseModel
             frListAsTable[i][6] = fr.getComment();
             i++;        
         }
+    }
+    public FinancialRecord getFinancialRecordById(int id)
+    {
+        FinancialRecord fr;
+        for(FinancialRecord f : frList)
+        {
+            if(f.getId()==id)
+            {
+                fr = f;
+                return fr;
+            }
+        }
+        return null;
     }
 }

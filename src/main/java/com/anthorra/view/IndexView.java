@@ -28,10 +28,10 @@ public class IndexView
         page.addBodySection(navbarSection);
         
         page.addBodySection().setSectionType("main")
-                .addDiv()
+                .addDiv().setDivStyle("margin:30px")
                     .addHeaderText("Üdvözöllek!", 2);
         page.addBodySection().setSectionType("article")
-                .addDiv()
+                .addDiv().setDivStyle("margin:30px")
                     .addParagraph("Ez az oldal a kiadások és bevételek menedzselésében hivatott segíteni. Ezeket kezelheted kategóriákban és adhatsz meg értékbel vagy százalékos limitet is.");
         
         return page;

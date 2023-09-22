@@ -1,8 +1,6 @@
 
 package com.anthorra.expenseexpert;
 
-import java.util.Date;
-
 /**
  *
  * @author Anthorra
@@ -12,6 +10,7 @@ public class FinancialRecord
     private double amount;
     private boolean isExpense;
     private int type, subtype, id;
+    //String typeName, subTypeName;
     private String realizedDate;
     private String comment;
 

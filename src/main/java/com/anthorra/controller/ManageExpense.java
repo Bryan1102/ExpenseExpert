@@ -13,7 +13,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
 
 /**
  *
@@ -35,6 +34,8 @@ public class ManageExpense extends HttpServlet
     private String[] optionsSubCategories;
     private String categoriesJson;
     private String[][] frTable;
+    private FinancialRecord fr;
+    String editCat, editSubCat;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -57,14 +58,20 @@ public class ManageExpense extends HttpServlet
         emodel.getFrList();
         frTable = emodel.getFrListAsTable();
         
+        
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter())
         {
+            replaceCategoryIdWithName();
+            
             HtmlPage page = new HtmlPage();
-            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError);
+            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError, fr, editCat, editSubCat);
             out.println(page.getPage());
         }
-        message = "";isError = false;
+        
+        message = "";
+        isError = false;
+        fr = null;
     }
     
     
@@ -83,6 +90,7 @@ public class ManageExpense extends HttpServlet
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+       
         processRequest(request, response);
     }
 
@@ -102,10 +110,17 @@ public class ManageExpense extends HttpServlet
         String mainCat = request.getParameter("mainCategory");
         String subCat = request.getParameter("subCategory");
         
-        
-        
-        switch(requestType)
+        if(requestType.indexOf("Edit=") != -1)
         {
+            int frId = Integer.parseInt(requestType.replaceAll("Edit=", ""));
+            this.fr = emodel.getFinancialRecordById(frId);
+            this.editCat = cm.getCategoryNameById(fr.getType());
+            this.editSubCat = cm.getSubCategoryNameById(fr.getSubtype());
+        }
+        else
+        {
+            switch(requestType)
+            {
             case "requestSaveFrecord":
                 /*get categories*/
                 errorMessage = "";
@@ -145,8 +160,12 @@ public class ManageExpense extends HttpServlet
                     message = (isExpenseBoolean?" Kiadás":" Bevétel") + " mentése sikeres! Azonosítója: " + dbResponse;
                 }
                 break;
- 
-        }
+                
+            
+            } /*end of switch*/
+        } /*end of if*/
+        
+        
             
         
         
@@ -165,4 +184,19 @@ public class ManageExpense extends HttpServlet
         return "Short description";
     }// </editor-fold>
 
+    
+    public void replaceCategoryIdWithName()
+    {
+        for(int i = 1; i < frTable.length; i++)
+        {
+            int categoryId = Integer.parseInt(frTable[i][4]);
+            //System.out.println("categoryId=" + categoryId);
+            int subCategoryId = Integer.parseInt(frTable[i][5]);
+            //System.out.println("subCategoryId=" + subCategoryId);
+            
+            frTable[i][4] = cm.getCategoryNameById(categoryId);
+            frTable[i][5] = cm.getSubCategoryNameById(subCategoryId);
+            
+        }
+    }
 }

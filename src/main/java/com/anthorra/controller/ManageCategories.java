@@ -2,6 +2,7 @@
 package com.anthorra.controller;
 
 import com.anthorra.expenseexpert.Category;
+import com.anthorra.expenseexpert.FinancialRecord;
 import com.anthorra.expenseexpert.SubCategory;
 import com.anthorra.model.CatModel;
 import com.anthorra.html.HtmlPage;
@@ -33,6 +34,7 @@ public class ManageCategories extends HttpServlet
     private String[][] categoriesTable;
     private String message;
     private String messageError;
+    
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

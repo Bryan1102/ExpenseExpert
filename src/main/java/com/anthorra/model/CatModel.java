@@ -39,7 +39,6 @@ public class CatModel
     
     private ArrayList retrieveMainCategories()
     {
-        //System.out.println("inside: retrieveMainCategories");
         ArrayList<Category> mainCategories = new ArrayList<>();
         
         Connection con = null;
@@ -48,8 +47,8 @@ public class CatModel
         {
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
             
-            String v_sql = "Select distinct ID, TYPE_DESC from fintypes WHERE IS_DEL = 0";
-            
+            //String v_sql = "Select distinct ID, TYPE_DESC from fintypes WHERE IS_DEL = 0";
+            String v_sql = "Select distinct ID, TYPE_DESC = CASE IS_DEL WHEN 1 THEN CONCAT('DEL ',TYPE_DESC) ELSE TYPE_DESC END from fintypes ";
             // Obtain a statement
             stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(v_sql);
@@ -90,7 +89,8 @@ public class CatModel
             //con = DriverManager.getConnection(url, username, password);
             //con = DbConnection.getConnection("localhost","3306","expenseexpert","javaDev","java1234_");
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
-            String v_sql = "Select distinct ID, TYPE_DESC, PARENT_ID from finsubtypes WHERE IS_DEL = 0";
+            //String v_sql = "Select distinct ID, TYPE_DESC, PARENT_ID from finsubtypes WHERE IS_DEL = 0";
+            String v_sql = "Select distinct ID, TYPE_DESC = CASE IS_DEL WHEN 1 THEN CONCAT('DEL ',TYPE_DESC) ELSE TYPE_DESC END, PARENT_ID from finsubtypes";
             
             // Obtain a statement
             stmt = con.createStatement();
@@ -429,6 +429,48 @@ public class CatModel
         }
         
         return subCatId;
+    }
+    public String getCategoryNameById(int id)
+    {
+        String categoryName = "";
+        if(id > 0)
+        {
+            for(Category c : mainCategories)
+                    {
+                        if(c.getId() == id)
+                        {
+                            categoryName = c.getCategoryName();
+                            break;
+                        }
+                    }
+        }
+        else
+        {
+            System.out.println("ERROR! - CatModel.getCategoryNameById received id <= 0!");
+        }
+        
+        return categoryName;
+    }
+    public String getSubCategoryNameById(int id)
+    {
+        String subCategoryName = "";
+        if(id > 0)
+        {
+            for(SubCategory sc : subCategories)
+                    {
+                        if(sc.getId() == id)
+                        {
+                            subCategoryName = sc.getCategoryName();
+                            break;
+                        }
+                    }
+        }
+        else
+        {
+            System.out.println("ERROR! - CatModel.getCategoryNameById received id <= 0!");
+        }
+        
+        return subCategoryName;
     }
     
     /* Convert ARRAYLIST TO ARRAYS */
