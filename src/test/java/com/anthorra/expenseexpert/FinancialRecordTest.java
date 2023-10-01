@@ -1,11 +1,6 @@
 
 package com.anthorra.expenseexpert;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
@@ -51,6 +46,8 @@ public class FinancialRecordTest
         double result = instance.getAmount();
         assertEquals(expResult, result, 0);
         
+        instance = new FinancialRecord(-15000, true, 1, 1, "Teszt kiadás", "2023-09-30");
+        assertEquals(0, instance.getAmount(), 0);
     }
 
     @org.junit.Test
@@ -116,6 +113,10 @@ public class FinancialRecordTest
         FinancialRecord instance = new FinancialRecord(15000, true, 1, 1, "Teszt kiadás", "2023-09-30");
         instance.setAmount(amount);
         assertEquals(amount, instance.getAmount(), 0);
+        
+        amount = -20000;
+        instance.setAmount(amount);
+        assertEquals(0, instance.getAmount(), 0);
     }
 
     @org.junit.Test

@@ -16,8 +16,8 @@ public class FinancialRecord
 
     public FinancialRecord(double amount, boolean isExpense, int type, int subtype, String comment, String realizedDate)
     {
-        this.amount = amount<0?0:((double)(Math.round(amount * 1000.00)/1000.00));
-        //setAmount(amount<0?0:((double)(Math.round(amount * 100.00)/100.00)));
+        //this.amount = amount<0?0:((double)(Math.round(amount * 1000.00)/1000.00));
+        setAmount(amount);
         this.isExpense = isExpense;
         this.type = type;
         this.subtype = subtype;
@@ -37,7 +37,12 @@ public class FinancialRecord
     public int getId()    {        return id;    }
     
     /* SETTER SECTION */
-    public void setAmount(double amount)    {        this.amount = amount;    }
+    public void setAmount(double amount)    
+    {        
+        //Ellenőrzés negativ értékre és kerekítés
+        this.amount = amount<0?0:((double)(Math.round(amount * 1000.00)/1000.00));
+        //this.amount = amount;    
+    }
     public void setIsExpense(boolean isExpense)    {        this.isExpense = isExpense;    }
     public void setType(int type)    {        this.type = type;    }
     public void setSubtype(int subtype)    {        this.subtype = subtype;    }
