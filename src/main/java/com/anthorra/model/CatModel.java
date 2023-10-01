@@ -146,7 +146,7 @@ public class CatModel
             ResultSet rs = st.executeQuery(); // Not update, you're returning a ResultSet.
                         if (rs.next()) {
                           retVal = (rs.getInt(1));
-                          System.out.println("new Category ID: " + retVal);
+                          //System.out.println("new Category ID: " + retVal);
                         }
             
             // Closing the connection as per the requirement with connection is completed

@@ -67,7 +67,7 @@ public class FinancialRecordTest
         System.out.println("getType");
         FinancialRecord instance = new FinancialRecord(15000, true, 1, 1, "Teszt kiadás", "2023-09-30");
         int expResult = 1;
-        int result = instance.getType();
+        int result = instance.getCategory();
         assertEquals(expResult, result);
         
     }
@@ -78,7 +78,7 @@ public class FinancialRecordTest
         System.out.println("getSubtype");
         FinancialRecord instance = new FinancialRecord(15000, true, 1, 1, "Teszt kiadás", "2023-09-30");
         int expResult = 1;
-        int result = instance.getSubtype();
+        int result = instance.getSubCategory();
         assertEquals(expResult, result);
         
     }
@@ -136,8 +136,8 @@ public class FinancialRecordTest
         System.out.println("setType");
         int type = 2;
         FinancialRecord instance = new FinancialRecord(15000, true, 1, 1, "Teszt kiadás", "2023-09-30");
-        instance.setType(type);
-        assertEquals(type, instance.getType());
+        instance.setCategory(type);
+        assertEquals(type, instance.getCategory());
         
     }
 
@@ -147,8 +147,8 @@ public class FinancialRecordTest
         System.out.println("setSubtype");
         int subtype = 3;
         FinancialRecord instance = new FinancialRecord(15000, true, 1, 1, "Teszt kiadás", "2023-09-30");
-        instance.setSubtype(subtype);
-        assertEquals(subtype, instance.getSubtype());
+        instance.setSubCategory(subtype);
+        assertEquals(subtype, instance.getSubCategory());
     }
 
     @org.junit.Test

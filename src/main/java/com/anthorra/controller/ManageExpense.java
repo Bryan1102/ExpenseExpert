@@ -114,8 +114,8 @@ public class ManageExpense extends HttpServlet
         {
             int frId = Integer.parseInt(requestType.replaceAll("Edit=", ""));
             this.fr = emodel.getFinancialRecordById(frId);
-            this.editCat = cm.getCategoryNameById(fr.getType());
-            this.editSubCat = cm.getSubCategoryNameById(fr.getSubtype());
+            this.editCat = cm.getCategoryNameById(fr.getCategory());
+            this.editSubCat = cm.getSubCategoryNameById(fr.getSubCategory());
         }
         else
         {

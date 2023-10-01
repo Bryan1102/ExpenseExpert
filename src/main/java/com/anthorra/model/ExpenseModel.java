@@ -40,8 +40,8 @@ public class ExpenseModel
             st = con.prepareStatement(v_sql);
             st.setInt(1, fr.isIsExpense() ? 1 : 0 );
             st.setDouble(2, fr.getAmount());
-            st.setInt(3, fr.getType());
-            st.setInt(4, fr.getSubtype());
+            st.setInt(3, fr.getCategory());
+            st.setInt(4, fr.getSubCategory());
             st.setString(5, fr.getRealizedDate());
             st.setString(6, fr.getComment());
             
@@ -154,8 +154,8 @@ public class ExpenseModel
             frListAsTable[i][1] = fr.getRealizedDate();
             frListAsTable[i][2] = String.valueOf(fr.getAmount());
             frListAsTable[i][3] = fr.isIsExpense()?"Kiadás":"Bevétel";
-            frListAsTable[i][4] = String.valueOf(fr.getType());
-            frListAsTable[i][5] = String.valueOf(fr.getSubtype());
+            frListAsTable[i][4] = String.valueOf(fr.getCategory());
+            frListAsTable[i][5] = String.valueOf(fr.getSubCategory());
             frListAsTable[i][6] = fr.getComment();
             i++;        
         }
