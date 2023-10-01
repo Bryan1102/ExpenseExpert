@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Anthorra
  */
-public class CatModel
+public class CategoryModel
 {
     private ArrayList<Category> mainCategories;
     private ArrayList<SubCategory> subCategories;
@@ -24,7 +24,7 @@ public class CatModel
     private String[][] categoriesTable;
     private String categoriesJson;
 
-    public CatModel()
+    public CategoryModel()
     {
         this.mainCategories = retrieveMainCategories();
         this.subCategories = retrieveSubCategories();

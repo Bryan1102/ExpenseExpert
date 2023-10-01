@@ -89,8 +89,14 @@ public class ExpenseModel
         {
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
             
+            /*
             String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, CONVERT(VARCHAR, fr.REALIZED_DATE, 23), fr.ID\n" +
-                           "FROM [expenseexpert].[dbo].[financialrecords] fr";
+                           "FROM [expenseexpert].[dbo].[financialrecords] fr";*/
+            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE as CATEGORY_ID, fr.SUBTYPE as SUBCATEGORY_ID, fr.COMMENT, \n" +
+                            "CONVERT(VARCHAR, fr.REALIZED_DATE, 23), fr.ID, t.TYPE_DESC as CATEGORY_NAME, st.TYPE_DESC as SUBCATEGORY_NAME\n" +
+                            "                           FROM [expenseexpert].[dbo].[financialrecords] fr \n" +
+                            "						   LEFT JOIN [expenseexpert].[dbo].[fintypes] t ON  fr.TYPE = t.ID\n" +
+                            "						   LEFT JOIN [expenseexpert].dbo.finsubtypes st ON fr.SUBTYPE = st.ID";
             
             // Obtain a statement
             stmt = con.createStatement();
@@ -106,6 +112,8 @@ public class ExpenseModel
                                         rs.getString(5),
                                         rs.getString(6));
                 fr.setId(rs.getInt(7));
+                fr.setCategoryName(rs.getString(8));
+                fr.setSubcategoryName(rs.getString(9));
                 frList.add(fr);
             }
             // Closing the connection as per the requirement with connection is completed
@@ -133,9 +141,6 @@ public class ExpenseModel
     }
     private void ConvertArrayToTable()
     {
-        String test ="<form method=\"post\" action=\"ManageExpense\"><button class=\"btn btn-danger\" name=\"requestType\" type=\"submit\" value=\"requestDeleteFrecord\">DEL</button></form>";            
-            
-        
         this.frListAsTable = new String[frList.size() + 1][7];
         
         frListAsTable[0][0] = "Azonostó";

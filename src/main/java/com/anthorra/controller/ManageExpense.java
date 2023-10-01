@@ -3,7 +3,7 @@ package com.anthorra.controller;
 
 import com.anthorra.expenseexpert.FinancialRecord;
 import com.anthorra.html.HtmlPage;
-import com.anthorra.model.CatModel;
+import com.anthorra.model.CategoryModel;
 import com.anthorra.model.ExpenseModel;
 import com.anthorra.view.ExpenseView;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ManageExpense extends HttpServlet
 {
     
-    private CatModel cm;
+    private CategoryModel cm;
     private ExpenseModel emodel;
     private String message;
     private boolean isError;
@@ -50,7 +50,7 @@ public class ManageExpense extends HttpServlet
             throws ServletException, IOException
     {
         
-        cm = new CatModel();
+        cm = new CategoryModel();
         emodel = new ExpenseModel();
         optionsCategories = cm.getOptionsCategories();
         optionsSubCategories = cm.getOptionsSubCategories();

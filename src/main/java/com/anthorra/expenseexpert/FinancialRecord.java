@@ -10,7 +10,7 @@ public class FinancialRecord
     private double amount;
     private boolean isExpense;
     private int category, subCategory, id;
-    //String typeName, subTypeName;
+    private String categoryName, subcategoryName;
     private String realizedDate;
     private String comment;
 
@@ -49,6 +49,8 @@ public class FinancialRecord
     public void setRealizedDate(String realizedDate)    {        this.realizedDate = realizedDate;    }
     public void setComment(String comment)    {        this.comment = comment;    }
     public void setId(int id)    {        this.id = id;    }
+    public void setCategoryName(String categoryName)    {        this.categoryName = categoryName;    }
+    public void setSubcategoryName(String subcategoryName)    {        this.subcategoryName = subcategoryName;    }
     
     
     @Override
