@@ -1,9 +1,7 @@
 
 package com.anthorra.controller;
 
-import com.anthorra.expenseexpert.Category;
 import com.anthorra.expenseexpert.FinancialRecord;
-import com.anthorra.expenseexpert.SubCategory;
 import com.anthorra.html.HtmlPage;
 import com.anthorra.model.CategoryModel;
 import com.anthorra.model.ExpenseModel;
@@ -15,7 +13,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 /**
  *
@@ -40,8 +37,7 @@ public class ManageExpense extends HttpServlet
     private FinancialRecord fr;
     String editCat, editSubCat;
     
-    private ArrayList<Category> mainCategories;
-    private ArrayList<SubCategory> subCategories;
+    
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -118,6 +114,9 @@ public class ManageExpense extends HttpServlet
         String mainCat = request.getParameter("mainCategory");
         String subCat = request.getParameter("subCategory");
         
+        int mainCatId = -1;
+        int subCatId = -1;
+        
         /* REQUEST: Meglévő record szerkesztése */
         if(requestType.indexOf("Edit=") != -1)
         {
@@ -128,20 +127,25 @@ public class ManageExpense extends HttpServlet
         }
         else
         {
+            if(mainCat != null)
+            {mainCatId = Integer.parseInt(mainCat);}
+            if(subCat != null)
+            {subCatId = Integer.parseInt(subCat);}
+            
+            
             switch(requestType)
             {
             case "requestSaveFrecord": /* REQUEST: új rekord mentése */
                 /*get categories*/
                 errorMessage = "";
                 
-                int mainCatId = Integer.parseInt(mainCat);
-                int subCatId = Integer.parseInt(subCat);
                 
                 if(mainCatId < 0 || subCatId < 0)
                 {
                     isError = true;
                     if(mainCatId < 0){errorMessage+=" Kategória nem található!";}
                     if(subCatId < 0){errorMessage+=" Alkategória nem található!";}
+                    break;
                     
                 }
                 else
@@ -149,12 +153,10 @@ public class ManageExpense extends HttpServlet
                     /*amount*/
                     String amount = request.getParameter("amount");
                     double amountDouble = Double.parseDouble(amount);
-                    System.out.println("amount=" + amountDouble);
-
+                    
                     /*comment*/
                     String comment = request.getParameter("comment");
-                    System.out.println("comment=" + comment);
-
+                    
                     /*isExpense*/
                     String isExpense = request.getParameter("isExpense");
                     if(isExpense==null)
@@ -162,16 +164,72 @@ public class ManageExpense extends HttpServlet
                                 isExpense = "false";
                             }
                     Boolean isExpenseBoolean = Boolean.valueOf(isExpense);
-                    System.out.println("isExpense? " + isExpenseBoolean);
+                    
                     /*date*/
                     String rDate = request.getParameter("datum");
                     
                     int dbResponse = emodel.saveFinancialRecord(new FinancialRecord(amountDouble, isExpenseBoolean, mainCatId, subCatId, comment, rDate));
-                    System.out.println("dbResponse: " + dbResponse);
                     message = (isExpenseBoolean?" Kiadás":" Bevétel") + " mentése sikeres! Azonosítója: " + dbResponse;
                 }
                 break;
+            case "requestSaveEditFrecord":
+                errorMessage = "";
                 
+                if(mainCatId < 0 || subCatId < 0)
+                {
+                    isError = true;
+                    if(mainCatId < 0){errorMessage+=" Kategória nem található!";}
+                    if(subCatId < 0){errorMessage+=" Alkategória nem található!";}
+                    break;
+                }
+                else
+                {
+                    /*id*/
+                    int id = -1;
+                    String idString = request.getParameter("frId");
+                    if(idString != null)
+                    {id = Integer.parseInt(idString);}
+                    
+                    /*amount*/
+                    String amount = request.getParameter("amount");
+                    double amountDouble = Double.parseDouble(amount);
+                    
+                    /*comment*/
+                    String comment = request.getParameter("comment");
+                    
+                    /*isExpense*/
+                    String isExpense = request.getParameter("isExpense");
+                    if(isExpense==null)
+                            {
+                                isExpense = "false";
+                            }
+                    Boolean isExpenseBoolean = Boolean.valueOf(isExpense);
+                    
+                    /*date*/
+                    String rDate = request.getParameter("datum");
+                    
+                    FinancialRecord updatedFr = new FinancialRecord(amountDouble, isExpenseBoolean, mainCatId, subCatId, comment, rDate);
+                    updatedFr.setId(id);
+                    
+                    int dbResponse = emodel.updateFinancialRecord(updatedFr);
+                    /*System.out.println("dbResponse: " + dbResponse);*/ /*a procedura a módosított sorok számát adja, tehát ha > 0 akkor sikeres*/
+                    message = (isExpenseBoolean?" Kiadás":" Bevétel") + " módosítása sikeres!";
+                }
+                break;   
+            
+            case "requestDeleteFr":
+                /*id*/
+                int id = -1;
+                String idString = request.getParameter("frId");
+                if(idString != null)
+                {id = Integer.parseInt(idString);}
+                int dbResponse = emodel.deleteFinancialRecord(id);
+                message = (" Tétel törlése sikeres!");
+                
+                break;
+                
+            case "requestCancel":
+                break;   
             
             } /*end of switch*/
         } /*end of if*/

@@ -2,7 +2,6 @@
 package com.anthorra.controller;
 
 import com.anthorra.expenseexpert.Category;
-import com.anthorra.expenseexpert.FinancialRecord;
 import com.anthorra.expenseexpert.SubCategory;
 import com.anthorra.model.CategoryModel;
 import com.anthorra.html.HtmlPage;
@@ -14,7 +13,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 
 /**
  *
@@ -26,8 +24,6 @@ import java.util.ArrayList;
 })
 public class ManageCategories extends HttpServlet
 {
-    private ArrayList<Category> mainCategories;
-    private ArrayList<SubCategory> subCategories;
     private CategoryModel cm;
     private String[][] optionsCategories;
     private String[][] optionsSubCategories;
@@ -49,8 +45,6 @@ public class ManageCategories extends HttpServlet
             throws ServletException, IOException
     {
         cm = new CategoryModel();
-        mainCategories = cm.getMainCategories();
-        subCategories = cm.getSubCategories();
         optionsCategories = cm.getOptionsCategories();
         optionsSubCategories = cm.getOptionsSubCategories();
         categoriesTable = cm.getCategoriesTable();

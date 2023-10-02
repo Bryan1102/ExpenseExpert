@@ -19,10 +19,16 @@ public class HtmlButton extends HtmlBodyElement
         this.parentDiv = parentDiv;
         this.text = text;
         //this.type = type;
-        this.attr = new HashMap<String, String>();
+        this.attr = new HashMap<>();
         addAttribute("type", type);
     }
-    
+    public HtmlButton(String text, String type)
+    {
+        this.text = text;
+        //this.type = type;
+        this.attr = new HashMap<>();
+        addAttribute("type", type);
+    }
     
     
     @Override

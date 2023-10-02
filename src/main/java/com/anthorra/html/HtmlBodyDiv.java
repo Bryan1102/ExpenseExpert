@@ -22,23 +22,23 @@ public class HtmlBodyDiv
 
     public HtmlBodyDiv(HtmlBodySection parentSection)
     {
-        this.elements = new ArrayList<HtmlBodyElement>();
-        this.divs = new ArrayList<HtmlBodyDiv>();
-        this.attr = new HashMap<String, String>();
+        this.elements = new ArrayList<>();
+        this.divs = new ArrayList<>();
+        this.attr = new HashMap<>();
         this.parentSection = parentSection;
     }
     public HtmlBodyDiv(HtmlBodyDiv parentDiv)
     {
-        this.elements = new ArrayList<HtmlBodyElement>();
-        this.divs = new ArrayList<HtmlBodyDiv>();
-        this.attr = new HashMap<String, String>();
+        this.elements = new ArrayList<>();
+        this.divs = new ArrayList<>();
+        this.attr = new HashMap<>();
         this.parentDiv = parentDiv;
     }
     public HtmlBodyDiv()
     {
-        this.elements = new ArrayList<HtmlBodyElement>();
-        this.divs = new ArrayList<HtmlBodyDiv>();
-        this.attr = new HashMap<String, String>();
+        this.elements = new ArrayList<>();
+        this.divs = new ArrayList<>();
+        this.attr = new HashMap<>();
         
     }
     
@@ -57,7 +57,7 @@ public class HtmlBodyDiv
         div += ">";
         
         
-        if(elements.size() > 0)
+        if(!elements.isEmpty())
         {
             for(int i = 0; i < elements.size(); i++)
             {
@@ -225,5 +225,10 @@ public class HtmlBodyDiv
         HtmlButton button = new HtmlButton(this, text, type);
         elements.add(button);
         return button;
+    }
+    public HtmlBodyDiv addButton(HtmlButton button)
+    {
+        elements.add(button);
+        return this;
     } 
 }

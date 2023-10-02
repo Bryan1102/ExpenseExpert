@@ -49,11 +49,10 @@ public class ExpenseModel
             //retVal = st.executeUpdate();
             //because of 'A result set was generated for update' type error
             ResultSet rs = st.executeQuery(); // Not update, you're returning a ResultSet.
-                        if (rs.next()) {
+                        if (rs.next()) 
+                        {
                           retVal = (rs.getInt(1));
-                          System.out.println("new FinancialRecord ID: " + retVal);
                         }
-            //System.out.println("saveFinancialRecord: " + retVal);
             
             // Closing the connection as per the requirement with connection is completed
             con.close();
@@ -71,8 +70,94 @@ public class ExpenseModel
         }
         return retVal;
     }
-
-    
+    public int updateFinancialRecord(FinancialRecord fr)
+    {
+        int retVal = -1;
+        Connection con = null;
+        PreparedStatement st = null;
+        
+        try
+        {
+            con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
+            
+            String v_sql = "DECLARE @RC int\n" +
+                            "EXECUTE @RC = [dbo].[P_UPDATE_FR] ?,?,?,?,?,?  ,?\n" +
+                            "SELECT @RC";
+            
+            // Obtain a statement
+            st = con.prepareStatement(v_sql);
+            st.setInt(1, fr.getId());
+            st.setInt(2, fr.isIsExpense() ? 1 : 0 );
+            st.setDouble(3, fr.getAmount());
+            st.setInt(4, fr.getCategory());
+            st.setInt(5, fr.getSubCategory());
+            st.setString(6, fr.getRealizedDate());
+            st.setString(7, fr.getComment());
+            
+            // Execute the query
+            ResultSet rs = st.executeQuery();
+                        if (rs.next()) 
+                        {
+                          retVal = (rs.getInt(1));
+                        }
+            
+        // Closing the connection
+            con.close();
+            return retVal;
+        } 
+        catch (SQLException ex)
+        {
+            /*Logger.getLogger(DBHandler.class.getName()).log(Level.SEVERE, null, ex);*/
+            System.out.println(ex);
+        }
+        finally
+        {
+            try{st.close();} catch (SQLException ex){}
+            try{con.close();} catch (SQLException ex){}
+        }
+        return retVal;
+    }
+    public int deleteFinancialRecord(int id)
+    {
+        int retVal = -1;
+        Connection con = null;
+        PreparedStatement st = null;
+        
+        try
+        {
+            con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
+            
+            String v_sql = "DECLARE @RC int\n" +
+                            "EXECUTE @RC = [dbo].[P_DELETE_FR] ?\n" +
+                            "SELECT @RC";
+            
+            // Obtain a statement
+            st = con.prepareStatement(v_sql);
+            st.setInt(1, id);
+            
+            // Execute the query
+            ResultSet rs = st.executeQuery();
+                        if (rs.next()) 
+                        {
+                          retVal = (rs.getInt(1));
+                        }
+            
+        // Closing the connection
+            con.close();
+            return retVal;
+        } 
+        catch (SQLException ex)
+        {
+            /*Logger.getLogger(DBHandler.class.getName()).log(Level.SEVERE, null, ex);*/
+            System.out.println(ex);
+        }
+        finally
+        {
+            try{st.close();} catch (SQLException ex){}
+            try{con.close();} catch (SQLException ex){}
+        }
+        return retVal;
+    }
     
     public ArrayList<FinancialRecord> getFrList()
     {

@@ -4,6 +4,7 @@ package com.anthorra.view;
 import com.anthorra.expenseexpert.FinancialRecord;
 import com.anthorra.html.HtmlBodyDiv;
 import com.anthorra.html.HtmlBodySection;
+import com.anthorra.html.HtmlButton;
 import com.anthorra.html.HtmlPage;
 /**
  *
@@ -75,19 +76,31 @@ public class ExpenseView
             
                 mainLeftDiv
                     .addNestedDiv()
-                        .addHeaderText("Új Költség / Bevétel Létrehozása", 4)
+                        .addHeaderText(isEdit?"Költség / Bevétel Szerkesztése":"Új Költség / Bevétel Létrehozása", 4)
                         .addNestedDiv().setIsForm(true)
                             .addAttribute("method", "post")
                             .addAttribute("action", "ManageExpense")
                             .addAttribute("style", "margin:10px")
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
-                                    .addInputField("checkbox")
-                                        .addAttribute("name", "isExpense")
-                                        .addAttribute("value", "true")
-                                        .addAttribute("class", "form-check-input")
-                                        .addAttribute("checked", "checked")
-                                        .addLabel("Kiadás?")
-                                        .getParentDiv().getParentDiv()
+                                    .addInputField("hidden").addAttribute("name", "frId")
+                                        .addAttribute("class", "form-control")
+                                        .addAttribute("placeholder", "id")
+                                        .addAttribute("value", isEdit?fr.getId()+"":"")
+                                        .getParentDiv()
+                                    .addNestedDiv().addAttribute("class", "input-group-prepend")
+                                        .addNestedDiv().addAttribute("class", "input-group-text")
+                                            .addInputField("checkbox")
+                                                .addAttribute("name", "isExpense")
+                                                .addAttribute("value", "true")
+                                                .addAttribute("class", "form-check-input")
+                                                .addAttribute("checked", "checked")
+                                                .addAttribute("style", "z-index:0")
+                                                //.addLabel("Kiadás?")
+                                            .getParentDiv()
+                                            .getParentDiv()
+                                            .getParentDiv().addInputField("text").addAttribute("placeholder", "Kiadás?").addAttribute("style", "z-index:0")
+                                        .getParentDiv()
+                                    .getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addInputField("number")
                                         .addAttribute("name", "amount")
@@ -101,9 +114,9 @@ public class ExpenseView
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addInputField("text").addAttribute("name", "comment")
-                                    .addAttribute("class", "form-control")
-                                    .addAttribute("placeholder", "komment")
-                                    .addAttribute("value", isEdit?fr.getComment():"")
+                                        .addAttribute("class", "form-control")
+                                        .addAttribute("placeholder", "komment")
+                                        .addAttribute("value", isEdit?fr.getComment():"")
                                     .getParentDiv().getParentDiv()
                                 /*select lists*/
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
@@ -135,33 +148,24 @@ public class ExpenseView
                                         .getParentDiv().getParentDiv()
                         
                                 /*buttons*/
-                                .addNestedDiv().addAttribute("class", "input-group mb-3")
-                                    .addButton("Mentés", "submit")
-                                        .addAttribute("class", "btn btn-success")
-                                        .addAttribute("name", "requestType")
-                                        .addAttribute("value", "requestSaveFrecord")
-                                        .getParentDiv()
-                                    .addButton("Reset", "reset")
-                                        .addAttribute("class", "btn btn-secondary")
-                                        .getParentDiv()
-                                    ;
-            
+                                .addNestedDiv(getButtonsDiv(isEdit));
                             
                         
             /* RIGHT COLUMN */   
             HtmlBodyDiv mainRightDiv = new HtmlBodyDiv().setDivClass("col-sm-9");
             row.addNestedDiv(mainRightDiv);
             
-            /* Create subDiv for Table */
+            /* Create subDiv for Table button - EDIT */
             HtmlBodyDiv tableButton = new HtmlBodyDiv()
                     .setIsForm(true)
                         .addAttribute("method", "post")
                         .addAttribute("action", "ManageExpense")
-                    .addButton("Edit", "submit")
+                    .addButton("Szerkesztés", "submit")
                         .addAttribute("class", "btn btn-info")
                         .addAttribute("name", "requestType")
                         .addAttribute("value", "#Edit#")
                         .getParentDiv();
+            
             
             /* FIN.Record LIST */            
             HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
@@ -175,8 +179,6 @@ public class ExpenseView
             mainRightDiv.addNestedDiv(mainListDiv);
                 
                 
-            //mainSection.addDiv(getExpenseModal());
-                
                 page.addBodySection(mainSection);
         return page;
         
@@ -185,7 +187,7 @@ public class ExpenseView
     
     
 
-    
+    /* Jscript = a beágyazott kategóriákat előre megkapja egy JSON stringben és a kiválasztás alapján listázza az alkategóriákat */
     private static String getCascadeJs(String categoriesJson)
     {
         String jsCascade = "var subjectObject = \n" +
@@ -216,4 +218,66 @@ public class ExpenseView
     }
 
     
+    /* Gombokat összefogó div */
+    private static HtmlBodyDiv getButtonsDiv(boolean isEdit)
+    {
+        HtmlBodyDiv buttonsDiv = new HtmlBodyDiv();
+        buttonsDiv.addAttribute("class", "input-group mb-3");
+        buttonsDiv.addButton(isEdit?getSaveEditButton():getSaveButton())
+                   .addButton(isEdit?getCancelButton():getResetButton());
+        
+        if(isEdit)
+        {
+            buttonsDiv.addButton(getDeleteButton());
+        }
+        
+        return buttonsDiv;
+    }
+    
+    /* Új form gombjai */
+    private static HtmlButton getSaveButton()
+    {
+        HtmlButton button = new HtmlButton("Mentés", "submit");
+        button
+            .addAttribute("class", "btn btn-success")
+            .addAttribute("name", "requestType")
+            .addAttribute("value", "requestSaveFrecord");
+        return button;
+    }
+    private static HtmlButton getResetButton()
+    {
+        HtmlButton button = new HtmlButton("Reset", "reset");
+        button
+            .addAttribute("class", "btn btn-secondary");
+        return button;
+    }
+    
+    /* Szerkesztés gombjai */
+    private static HtmlButton getSaveEditButton()
+    {
+        HtmlButton button = new HtmlButton("Módosítás", "submit");
+        button
+            .addAttribute("class", "btn btn-success")
+            .addAttribute("name", "requestType")
+            .addAttribute("value", "requestSaveEditFrecord");
+        return button;
+    }
+    private static HtmlButton getCancelButton()
+    {
+        HtmlButton button = new HtmlButton("Mégsem", "submit");
+        button
+            .addAttribute("class", "btn btn-secondary")
+            .addAttribute("name", "requestType")
+            .addAttribute("value", "requestCancel");
+        return button;
+    }
+    private static HtmlButton getDeleteButton()
+    {
+        HtmlButton button = new HtmlButton("Törlés", "submit");
+        button
+            .addAttribute("class", "btn btn-danger")
+            .addAttribute("name", "requestType")
+            .addAttribute("value", "requestDeleteFr");
+        return button;
+    }
 }
