@@ -29,8 +29,8 @@ public class ManageCategories extends HttpServlet
     private ArrayList<Category> mainCategories;
     private ArrayList<SubCategory> subCategories;
     private CategoryModel cm;
-    private String[] optionsCategories;
-    private String[] optionsSubCategories;
+    private String[][] optionsCategories;
+    private String[][] optionsSubCategories;
     private String[][] categoriesTable;
     private String message;
     private String messageError;
@@ -105,54 +105,39 @@ public class ManageCategories extends HttpServlet
     {
         /*get request type for the switch*/
         String requestType = request.getParameter("requestType");
+        String parentCatName = "";
+        String subCatName = "";
+        int parentCatId = -1;
+        int subCatId = -1;
         
         /*get selected mainCategory name and id*/
         String parentCat = request.getParameter("mainCategory");
-        
-        int parentCatId = 0;
         if(parentCat != null)
         {
-            for(Category c : mainCategories)
-                    {
-                        if(parentCat.equals(c.getCategoryName()) )
-                        {
-                            parentCatId = c.getId();
-                            break;
-                        }
-                    }
+            parentCatId = Integer.parseInt(parentCat);
+            parentCatName = cm.getCategoryNameById(parentCatId);
         }
         
         /*get selected subCategory name and id*/
         String subCat = request.getParameter("subCategory");
-        int subCatId = 0;
         if(subCat != null)
         {
-            for(SubCategory sc : subCategories)
-                    {
-                        if(subCat.equals(sc.getCategoryName()) )
-                        {
-                            subCatId = sc.getId();
-                            break;
-                        }
-                    }
+            subCatId = Integer.parseInt(subCat);
+            subCatName = cm.getSubCategoryNameById(subCatId);
         }
         
-        /*decide what to do based on request type*/
+        /*decide what to do based on request type - request type is assigned to each button in html */
         switch(requestType)
         {
             case "requestNewCategory":
                 String newCat = request.getParameter("newCategory");
-                System.out.println("newCategory = " + newCat);
                 Category cat = new Category(0, newCat);
                 int newCatId = cm.saveCategory(cat);
-                System.out.println("servlet dbResponse = " + newCatId);
                 message = "\"" + newCat + "\" mentése sikeres! Azonosítója: " + newCatId;
                 break;
                 
             case "requestNewSubCategory":
                 String newSubCat = request.getParameter("newSubCategory");
-                //String parentCat = request.getParameter("mainCategory");
-                
                 SubCategory sc = new SubCategory(0, parentCatId, newSubCat);
                 int newSubCatId = cm.saveSubCategory(sc);
                 message = "\"" + newSubCat + "\" mentése sikeres! Azonosítója: " + newSubCatId;
@@ -160,35 +145,29 @@ public class ManageCategories extends HttpServlet
                 
             case "requestRenameCategory":
                 String renameCategoryTo = request.getParameter("renameCategoryTo");
-                System.out.println("renameCategory: " + parentCat + " TO this: " + renameCategoryTo);
                 if(!renameCategoryTo.isBlank())
                 {
                     int renamedId = cm.renameCategory(parentCatId, renameCategoryTo);
-                    message = parentCat + " sikeresen átnevezve erre: " + renameCategoryTo + "(id=" + renamedId + ")";
+                    message = " " + parentCatName + " sikeresen átnevezve erre: " + renameCategoryTo /*+ "(rows=" + renamedId + ")"*/;
                 }
                 break;
             
             case "requestRenameSubCategory":
                 String renameSubCategoryTo = request.getParameter("renameSubCategoryTo");
-                //System.out.println("renameCategory: " + parentCat + " TO this: " + renameCategoryTo);
                 if(!renameSubCategoryTo.isBlank())
                 {
                     int renamedId = cm.renameSubCategory(subCatId, renameSubCategoryTo);
-                    message = subCat + " sikeresen átnevezve erre: " + renameSubCategoryTo + "(id=" + renamedId + ")";
+                    message = " " + subCatName + " sikeresen átnevezve erre: " + renameSubCategoryTo /*+ "(rows=" + renamedId + ")"*/;
                 }
                 break; 
                 
             case "requestDeleteCategory":
-                
-                System.out.println("Delete Category: " + parentCat + " id=" + parentCatId);
                 int deleteID = cm.deleteCategory(parentCatId);
-                message = parentCat + "(id=" + parentCatId + " sikeresen törölve (rows=" + deleteID + ")";
+                message = parentCatName + "(id=" + parentCatId + " sikeresen törölve";
                 break;
             case "requestDeleteSubCategory":
-                
-                System.out.println("Delete Category: " + subCat + " id=" + subCatId);
                 int deleteSubID = cm.deleteSubCategory(subCatId);
-                message = subCat + "(id=" + subCatId + " sikeresen törölve (rows=" + deleteSubID + ")";
+                message = subCatName + "(id=" + subCatId + " sikeresen törölve";
                 break;
             
         }

@@ -1,7 +1,9 @@
 
 package com.anthorra.controller;
 
+import com.anthorra.expenseexpert.Category;
 import com.anthorra.expenseexpert.FinancialRecord;
+import com.anthorra.expenseexpert.SubCategory;
 import com.anthorra.html.HtmlPage;
 import com.anthorra.model.CategoryModel;
 import com.anthorra.model.ExpenseModel;
@@ -13,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 /**
  *
@@ -30,12 +33,15 @@ public class ManageExpense extends HttpServlet
     private String message;
     private boolean isError;
     private String errorMessage;
-    private String[] optionsCategories;
-    private String[] optionsSubCategories;
+    private String[][] optionsCategories;
+    private String[][] optionsSubCategories;
     private String categoriesJson;
     private String[][] frTable;
     private FinancialRecord fr;
     String editCat, editSubCat;
+    
+    private ArrayList<Category> mainCategories;
+    private ArrayList<SubCategory> subCategories;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -52,18 +58,18 @@ public class ManageExpense extends HttpServlet
         
         cm = new CategoryModel();
         emodel = new ExpenseModel();
-        optionsCategories = cm.getOptionsCategories();
+        
+        optionsCategories = cm.getOptionsCategories(); /* select list value-option feltöltéshez szükséges String [][] elemek */
         optionsSubCategories = cm.getOptionsSubCategories();
+        
         categoriesJson = cm.getCategoriesJson();
         emodel.getFrList();
-        frTable = emodel.getFrListAsTable();
+        frTable = emodel.getFrListAsTable(); /* A FinancialRecord entitások listája táblázatosan - így fogadja a HTMLTable az inputot */
         
         
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter())
         {
-            replaceCategoryIdWithName();
-            
             HtmlPage page = new HtmlPage();
             page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError, fr, editCat, editSubCat);
             out.println(page.getPage());
@@ -106,10 +112,13 @@ public class ManageExpense extends HttpServlet
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+        
+        /* COMMENT: Minden gombnak van egy név-érték párosa, ami RequestType-value, ami value a kért akció pl.: requestSave */
         String requestType = request.getParameter("requestType");
         String mainCat = request.getParameter("mainCategory");
         String subCat = request.getParameter("subCategory");
         
+        /* REQUEST: Meglévő record szerkesztése */
         if(requestType.indexOf("Edit=") != -1)
         {
             int frId = Integer.parseInt(requestType.replaceAll("Edit=", ""));
@@ -121,16 +130,18 @@ public class ManageExpense extends HttpServlet
         {
             switch(requestType)
             {
-            case "requestSaveFrecord":
+            case "requestSaveFrecord": /* REQUEST: új rekord mentése */
                 /*get categories*/
                 errorMessage = "";
-                int mainCatId = cm.getCategoryIdByName(mainCat);
-                int subCatId = cm.getSubCategoryIdByName(subCat);
-                if(mainCatId==-1 || subCatId==-1)
+                
+                int mainCatId = Integer.parseInt(mainCat);
+                int subCatId = Integer.parseInt(subCat);
+                
+                if(mainCatId < 0 || subCatId < 0)
                 {
                     isError = true;
-                    if(mainCatId==-1){errorMessage+=" Kategória nem található!";}
-                    if(subCatId==-1){errorMessage+=" Alkategória nem található!";}
+                    if(mainCatId < 0){errorMessage+=" Kategória nem található!";}
+                    if(subCatId < 0){errorMessage+=" Alkategória nem található!";}
                     
                 }
                 else
@@ -150,7 +161,7 @@ public class ManageExpense extends HttpServlet
                             {
                                 isExpense = "false";
                             }
-                    Boolean isExpenseBoolean = Boolean.parseBoolean(isExpense);
+                    Boolean isExpenseBoolean = Boolean.valueOf(isExpense);
                     System.out.println("isExpense? " + isExpenseBoolean);
                     /*date*/
                     String rDate = request.getParameter("datum");
@@ -185,18 +196,5 @@ public class ManageExpense extends HttpServlet
     }// </editor-fold>
 
     
-    public void replaceCategoryIdWithName()
-    {
-        for(int i = 1; i < frTable.length; i++)
-        {
-            int categoryId = Integer.parseInt(frTable[i][4]);
-            //System.out.println("categoryId=" + categoryId);
-            int subCategoryId = Integer.parseInt(frTable[i][5]);
-            //System.out.println("subCategoryId=" + subCategoryId);
-            
-            frTable[i][4] = cm.getCategoryNameById(categoryId);
-            frTable[i][5] = cm.getSubCategoryNameById(subCategoryId);
-            
-        }
-    }
+    
 }

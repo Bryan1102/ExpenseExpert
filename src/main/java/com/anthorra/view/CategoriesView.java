@@ -13,7 +13,7 @@ import com.anthorra.html.HtmlPage;
 public class CategoriesView
 {
     //public static HtmlPage getPageCategories(ArrayList<Category> mainCategories, ArrayList<SubCategory> subCategories, String message)
-    public static HtmlPage getPageCategories(String[] optionsCategories, String[] optionsSubCategories, String[][] categoriesTable, String message)
+    public static HtmlPage getPageCategories(String[][] optionsCategories, String[][] optionsSubCategories, String[][] categoriesTable, String message)
     {
         
         HtmlPage page = new HtmlPage();

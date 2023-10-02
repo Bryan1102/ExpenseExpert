@@ -35,6 +35,9 @@ public class FinancialRecord
     public String getComment()    {        return comment;    }
     public String getRealizedDate()    {        return realizedDate;    }
     public int getId()    {        return id;    }
+    public String getCategoryName()    {        return categoryName;    }
+    public String getSubcategoryName()    {        return subcategoryName;    }
+    
     
     /* SETTER SECTION */
     public void setAmount(double amount)    

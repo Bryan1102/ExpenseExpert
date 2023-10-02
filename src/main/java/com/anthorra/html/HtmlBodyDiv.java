@@ -214,6 +214,12 @@ public class HtmlBodyDiv
         elements.add(select);
         return select;
     } 
+    public HtmlSelectList addSelectList(String[][] options)
+    {
+        HtmlSelectList select = new HtmlSelectList(options, this);
+        elements.add(select);
+        return select;
+    } 
     public HtmlButton addButton(String text, String type)
     {
         HtmlButton button = new HtmlButton(this, text, type);

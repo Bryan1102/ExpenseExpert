@@ -159,8 +159,10 @@ public class ExpenseModel
             frListAsTable[i][1] = fr.getRealizedDate();
             frListAsTable[i][2] = String.valueOf(fr.getAmount());
             frListAsTable[i][3] = fr.isIsExpense()?"Kiadás":"Bevétel";
-            frListAsTable[i][4] = String.valueOf(fr.getCategory());
-            frListAsTable[i][5] = String.valueOf(fr.getSubCategory());
+            //frListAsTable[i][4] = String.valueOf(fr.getCategory());
+            frListAsTable[i][4] = fr.getCategoryName();
+            //frListAsTable[i][5] = String.valueOf(fr.getSubCategory());
+            frListAsTable[i][5] = fr.getSubcategoryName();
             frListAsTable[i][6] = fr.getComment();
             i++;        
         }

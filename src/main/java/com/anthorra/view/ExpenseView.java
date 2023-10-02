@@ -11,12 +11,12 @@ import com.anthorra.html.HtmlPage;
  */
 public class ExpenseView
 {
-    public static HtmlPage getPageExpense(String[] optionsCategories, String[] optionsSubCategories, 
+    public static HtmlPage getPageExpense(String[][] optionsCategories, String[][] optionsSubCategories, 
                                         String categoriesJson, String[][] frTable, 
                                         String message, Boolean isError, FinancialRecord fr, 
                                         String editCat, String editSubCat)
     {
-        String[] dummy = {" - válassz - "};
+        //String[] dummy = {" - válassz - "}; /* kezdeti érték a beágyazott kategóriákhoz, jelenleg nincs használatban */
         boolean isEdit = fr!=null;
         
         HtmlPage page = new HtmlPage();
@@ -25,7 +25,7 @@ public class ExpenseView
         page.setLang("hu");
         page.headerTitle("Expense Expert - Kiadások");
         page.getHtmlHeader().setStylesheet("https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css");
-        //page.getHtmlHeader().setjScript(getCascadeJs(categoriesJson));
+        //page.getHtmlHeader().setjScript(getCascadeJs(categoriesJson)); /* az egymásba ágyazott kategóriák működtetéséhez szükséges Jscript */
         
 
         /* HTML BODY */
@@ -51,7 +51,7 @@ public class ExpenseView
             /* LEFT COLUMN */
             HtmlBodyDiv mainLeftDiv = new HtmlBodyDiv().setDivClass("col-sm-3");
             
-            /* SUCCESS DIV */
+            /* SUCCESS / ERROR DIV */
             HtmlBodyDiv success = new HtmlBodyDiv();
             if(message != null && !message.isEmpty())
             {

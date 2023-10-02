@@ -19,8 +19,8 @@ public class CategoryModel
 {
     private ArrayList<Category> mainCategories;
     private ArrayList<SubCategory> subCategories;
-    private String[] optionsCategories;
-    private String[] optionsSubCategories;
+    private String[][] optionsCategories;
+    private String[][] optionsSubCategories;
     private String[][] categoriesTable;
     private String categoriesJson;
 
@@ -31,7 +31,7 @@ public class CategoryModel
         ConvertCategoriesToArray();
         ConvertSubCategoriesToArray();
         ConvertCategoriesToTable();
-        ConvertCategoriesToJson();
+        //ConvertCategoriesToJson(); /* egymásba ágyazott kategóriák JScript input-ja */
         
     }
     
@@ -376,12 +376,12 @@ public class CategoryModel
         return mainCategories;
     }
 
-    public String[] getOptionsCategories()
+    public String[][] getOptionsCategories()
     {
         return optionsCategories;
     }
 
-    public String[] getOptionsSubCategories()
+    public String[][] getOptionsSubCategories()
     {
         return optionsSubCategories;
     }
@@ -476,21 +476,21 @@ public class CategoryModel
     /* Convert ARRAYLIST TO ARRAYS */
     private void ConvertCategoriesToArray()
     {
-        this.optionsCategories = new String[mainCategories.size()];
+        this.optionsCategories = new String[mainCategories.size()][2];
         for(int i = 0; i < mainCategories.size(); i++)
-    {
-        optionsCategories[i] = mainCategories.get(i).getCategoryName();
-    }    
+        {
+            optionsCategories[i][0] = mainCategories.get(i).getId() + "";
+            optionsCategories[i][1] = mainCategories.get(i).getCategoryName();
+        }    
 
     }
     private void ConvertSubCategoriesToArray()
     {
-        this.optionsSubCategories = new String[subCategories.size()];
-        int i = 0;
-        for(SubCategory sc : subCategories)
+        this.optionsSubCategories = new String[subCategories.size()][2];
+        for(int i = 0; i < subCategories.size(); i++)
         {
-            optionsSubCategories[i] = sc.getCategoryName();
-            i += 1;
+            optionsSubCategories[i][0] = subCategories.get(i).getId() + "";
+            optionsSubCategories[i][1] = subCategories.get(i).getCategoryName();
         }
         
     }

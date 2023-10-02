@@ -11,8 +11,10 @@ public class HtmlSelectList extends HtmlBodyElement
 {
     private HashMap<String, String> attr;
     private String[] options;
+    private String[][] valuesOptions;
     private HtmlBodyDiv parentDiv;
     private String selected;
+    private int selectedId;
     
     public HtmlSelectList(String[] options, HtmlBodyDiv parentDiv)
     {
@@ -20,7 +22,12 @@ public class HtmlSelectList extends HtmlBodyElement
         this.options = options;
         this.parentDiv = parentDiv;
     }
-    
+    public HtmlSelectList(String[][] valuesOptions, HtmlBodyDiv parentDiv)
+    {
+        this.attr = new HashMap<>();
+        this.valuesOptions = valuesOptions;
+        this.parentDiv = parentDiv;
+    }
     
     
     @Override
@@ -31,25 +38,47 @@ public class HtmlSelectList extends HtmlBodyElement
             {select += SupportFunctions.decodeAttributes(attr);}
         select += ">";
         
+        // TO BE ADDED IN NEXT VERSION MAYBE
         //select += "<option value=\"\" disabled hidden>Kérlek Válassz</option>"; /*nem működik?*/
         //value hozzáadható????
         //<option value="1">One</option>
         //<option value="2">Two</option>
         
-        for(String o : options)
+        if(options != null)
         {
-            if(o.equals(selected))
+            for(String o : options)
             {
-                select += "<option selected>";
+                if(o.equals(selected)) /* ha a liste eleme egyezik a defaultnak kiválasztott értékkel*/
+                {
+                    select += "<option selected>";
+                }
+                else
+                {
+                    select += "<option>";
+                }
+                select += o;
+
+                select += "</option>";
             }
-            else
-            {
-                select += "<option>";
-            }
-            select += o;
-            
-            select += "</option>";
         }
+        if(valuesOptions != null)
+        {
+            for(String[] o : valuesOptions)
+            {
+                if(o[0].equals(selectedId + "") || o[1].equals(selected))
+                {
+                    select += "<option value=" + o[0] + " selected>";
+                }
+                else
+                {
+                    select += "<option value=" + o[0] + ">";
+                }
+                select += o[1];
+
+                select += "</option>";
+            }
+        }
+            
         
         
         select += "</select>";
@@ -68,6 +97,11 @@ public class HtmlSelectList extends HtmlBodyElement
     public HtmlSelectList setSelectedOption(String selected)
     {
         this.selected = selected;
+        return this;
+    }
+    public HtmlSelectList setSelectedOptionId(int selected)
+    {
+        this.selectedId = selected;
         return this;
     }
 }
