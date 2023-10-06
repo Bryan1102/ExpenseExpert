@@ -14,8 +14,7 @@ public class ExpenseView
 {
     public static HtmlPage getPageExpense(String[][] optionsCategories, String[][] optionsSubCategories, 
                                         String categoriesJson, String[][] frTable, 
-                                        String message, Boolean isError, FinancialRecord fr, 
-                                        String editCat, String editSubCat)
+                                        String message, Boolean isError, FinancialRecord fr)
     {
         //String[] dummy = {" - válassz - "}; /* kezdeti érték a beágyazott kategóriákhoz, jelenleg nincs használatban */
         boolean isEdit = fr!=null;
@@ -66,7 +65,6 @@ public class ExpenseView
                     success.addAttribute("class", "alert alert-success")
                         .addParagraph("<strong>Sikeres! </strong>" + message);
                 }
-                
                 mainLeftDiv.addNestedDiv(success);
             }
             
@@ -130,7 +128,7 @@ public class ExpenseView
                                         .addAttribute("name", "mainCategory")
                                         .addAttribute("id", "type")
                                         .addAttribute("required", "required")
-                                        .setSelectedOption(isEdit?editCat:"")
+                                        .setSelectedOption(isEdit?fr.getCategoryName():"")
                                         .getParentDiv().getParentDiv()
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
                                     .addSelectList(optionsSubCategories)
@@ -138,7 +136,7 @@ public class ExpenseView
                                         .addAttribute("name", "subCategory")
                                         .addAttribute("id", "subtype")
                                         .addAttribute("required", "required")
-                                        .setSelectedOption(isEdit?editSubCat:"")
+                                        .setSelectedOption(isEdit?fr.getSubcategoryName():"")
                                         .getParentDiv().getParentDiv()
                                 /*date selector*/
                                 .addNestedDiv().addAttribute("class", "input-group mb-3")
@@ -160,36 +158,22 @@ public class ExpenseView
             HtmlBodyDiv mainRightDiv = new HtmlBodyDiv().setDivClass("col-sm-9");
             row.addNestedDiv(mainRightDiv);
             
-            /* Create subDiv for Table button - EDIT */
-            HtmlBodyDiv tableButton = new HtmlBodyDiv()
-                    .setIsForm(true)
-                        .addAttribute("method", "post")
-                        .addAttribute("action", "ManageExpense")
-                    .addButton("Szerkesztés", "submit")
-                        .addAttribute("class", "btn btn-info")
-                        .addAttribute("name", "requestType")
-                        .addAttribute("value", "#Edit#")
-                        .getParentDiv();
             
-            
-            /* FIN.Record LIST */            
+            /* F.Record LIST */            
             HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
-                        .addHeaderText("Meglévő Kategóriák listája", 4)
+                        .addHeaderText("Kiadások / Bevételek listája", 4)
                         ;   
             mainListDiv.addTable(frTable, true)
                     .addAttribute("style", "width:100%")
                     .addAttribute("class", "table table-hover")
                     .addAttribute("id", "frTable")
-                    .addNestedDiv(tableButton, "Szerkesztés"); 
+                    .addNestedDiv(getTableEditButton(), "Szerkesztés"); 
             mainRightDiv.addNestedDiv(mainListDiv);
                 
                 
-                page.addBodySection(mainSection);
+        page.addBodySection(mainSection);
         return page;
-        
     }
-    
-    
     
 
     /* Jscript = a beágyazott kategóriákat előre megkapja egy JSON stringben és a kiválasztás alapján listázza az alkategóriákat */
@@ -284,5 +268,20 @@ public class ExpenseView
             .addAttribute("name", "requestType")
             .addAttribute("value", "requestDeleteFr");
         return button;
+    }
+    
+    /* Create subDiv for Table button - EDIT */
+    private static HtmlBodyDiv getTableEditButton()
+    {
+        HtmlBodyDiv tableButton = new HtmlBodyDiv()
+                    .setIsForm(true)
+                        .addAttribute("method", "post")
+                        .addAttribute("action", "ManageExpense")
+                    .addButton("Szerkesztés", "submit")
+                        .addAttribute("class", "btn btn-info")
+                        .addAttribute("name", "requestType")
+                        .addAttribute("value", "#Edit#")
+                        .getParentDiv();
+        return tableButton;
     }
 }

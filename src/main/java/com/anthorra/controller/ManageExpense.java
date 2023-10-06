@@ -13,6 +13,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.YearMonth;
 
 /**
  *
@@ -35,10 +37,9 @@ public class ManageExpense extends HttpServlet
     private String categoriesJson;
     private String[][] frTable;
     private FinancialRecord fr;
-    String editCat, editSubCat;
-    
-    
-    
+    private String startDate = "2023-09-01";
+    private String endDate = "2023-09-30";
+     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -51,15 +52,28 @@ public class ManageExpense extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+        /* default dátum megadás */
+        LocalDate now = LocalDate.now();  
+        LocalDate firstDayOfMonth = now.withDayOfMonth(1);  
+        System.out.println(firstDayOfMonth);  
         
+        YearMonth ym = YearMonth.now();
+        int lastDayOfMonth = ym.atEndOfMonth().getDayOfMonth();  
+        System.out.println(lastDayOfMonth);
+        
+        
+        /* model-el létrehozása */
         cm = new CategoryModel();
-        emodel = new ExpenseModel();
+        emodel = new ExpenseModel(startDate, endDate);
         
+        /* kategóriák kérése a modeltől */
         optionsCategories = cm.getOptionsCategories(); /* select list value-option feltöltéshez szükséges String [][] elemek */
         optionsSubCategories = cm.getOptionsSubCategories();
         
+        /* json file kérése a modeltől - jelenleg nem használt beágyazott kategóriák és alkategóriákhoz szükséges - lásd: ExpenseView/getCascadeJs method */
         categoriesJson = cm.getCategoriesJson();
-        emodel.getFrList();
+        
+        /* pénzügyi tételek kérése a modeltől */
         frTable = emodel.getFrListAsTable(); /* A FinancialRecord entitások listája táblázatosan - így fogadja a HTMLTable az inputot */
         
         
@@ -67,7 +81,7 @@ public class ManageExpense extends HttpServlet
         try (PrintWriter out = response.getWriter())
         {
             HtmlPage page = new HtmlPage();
-            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError, fr, editCat, editSubCat);
+            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError, fr);
             out.println(page.getPage());
         }
         
@@ -122,8 +136,6 @@ public class ManageExpense extends HttpServlet
         {
             int frId = Integer.parseInt(requestType.replaceAll("Edit=", ""));
             this.fr = emodel.getFinancialRecordById(frId);
-            this.editCat = cm.getCategoryNameById(fr.getCategory());
-            this.editSubCat = cm.getSubCategoryNameById(fr.getSubCategory());
         }
         else
         {
@@ -234,10 +246,6 @@ public class ManageExpense extends HttpServlet
             } /*end of switch*/
         } /*end of if*/
         
-        
-            
-        
-        
         //processRequest(request, response);
         response.sendRedirect("ManageExpense");
     }
@@ -252,7 +260,4 @@ public class ManageExpense extends HttpServlet
     {
         return "Short description";
     }// </editor-fold>
-
-    
-    
 }

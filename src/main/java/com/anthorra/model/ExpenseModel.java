@@ -14,14 +14,17 @@ public class ExpenseModel
 {
     private ArrayList<FinancialRecord> frList;
     private String[][] frListAsTable;
+    private String startDate;
+    private String endDate;
     
     /* CONSTRUCTOR */
-    public ExpenseModel()
+    public ExpenseModel(String startDate, String endDate)
     {
         this.frList = new ArrayList<>();
-        
+        setStartEndDate(startDate, endDate);
     }
     
+    /* ENTITY - DB ACTIONS */
     public int saveFinancialRecord(FinancialRecord fr)
     {
         int retVal = -1;
@@ -159,33 +162,36 @@ public class ExpenseModel
         return retVal;
     }
     
-    public ArrayList<FinancialRecord> getFrList()
+    /* GET DATA */
+    private void getFrList()
     {
-        getFinancialRecords(2023, 9);
-        return frList;
+        getFinancialRecords(startDate, endDate);
+        ConvertArrayToTable();
     }
-    private void getFinancialRecords(int year, int month)
+    private void getFinancialRecords(String startDate, String endDate)
     {
         int retVal = -1;
         Connection con = null;
-        Statement stmt = null;
+        PreparedStatement stmt = null;
         
         try
         {
             con = DbConnection.getConnection(DbConnection.dbType.mssql, "localhost\\SQLEXPRESS","1433","expenseexpert","expe","12345");
             
-            /*
-            String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE, fr.SUBTYPE, fr.COMMENT, CONVERT(VARCHAR, fr.REALIZED_DATE, 23), fr.ID\n" +
-                           "FROM [expenseexpert].[dbo].[financialrecords] fr";*/
             String v_sql = "Select DISTINCT fr.AMOUNT, fr.ISEXPENSE, fr.TYPE as CATEGORY_ID, fr.SUBTYPE as SUBCATEGORY_ID, fr.COMMENT, \n" +
                             "CONVERT(VARCHAR, fr.REALIZED_DATE, 23), fr.ID, t.TYPE_DESC as CATEGORY_NAME, st.TYPE_DESC as SUBCATEGORY_NAME\n" +
                             "                           FROM [expenseexpert].[dbo].[financialrecords] fr \n" +
                             "						   LEFT JOIN [expenseexpert].[dbo].[fintypes] t ON  fr.TYPE = t.ID\n" +
-                            "						   LEFT JOIN [expenseexpert].dbo.finsubtypes st ON fr.SUBTYPE = st.ID";
+                            "						   LEFT JOIN [expenseexpert].dbo.finsubtypes st ON fr.SUBTYPE = st.ID\n" +
+                            "                           WHERE fr.REALIZED_DATE BETWEEN ? AND ?";
             
             // Obtain a statement
-            stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(v_sql);
+            //stmt = con.createStatement();
+            stmt = con.prepareStatement(v_sql);
+                stmt.setString(1, startDate);
+                stmt.setString(2, endDate);
+                
+            ResultSet rs = stmt.executeQuery(/*v_sql*/);
             
             // Execute the query
             while(rs.next())
@@ -201,7 +207,6 @@ public class ExpenseModel
                 fr.setSubcategoryName(rs.getString(9));
                 frList.add(fr);
             }
-            // Closing the connection as per the requirement with connection is completed
             con.close();
             
         } 
@@ -221,7 +226,7 @@ public class ExpenseModel
 
     public String[][] getFrListAsTable()
     {
-        ConvertArrayToTable();
+        //ConvertArrayToTable();
         return frListAsTable;
     }
     private void ConvertArrayToTable()
@@ -265,4 +270,14 @@ public class ExpenseModel
         }
         return null;
     }
+
+    public void setStartEndDate(String startDate, String endDate)
+    {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        getFrList();
+    }
+
+    
+    
 }
