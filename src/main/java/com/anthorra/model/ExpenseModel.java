@@ -4,6 +4,8 @@ import com.anthorra.db.DbConnection;
 import com.anthorra.expenseexpert.FinancialRecord;
 import java.sql.*;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 
 /**
@@ -18,10 +20,18 @@ public class ExpenseModel
     private String endDate;
     
     /* CONSTRUCTOR */
-    public ExpenseModel(String startDate, String endDate)
+    public ExpenseModel()
     {
         this.frList = new ArrayList<>();
-        setStartEndDate(startDate, endDate);
+        
+        /* default dátum megadás */
+        LocalDate now = LocalDate.now();  
+        LocalDate firstDayOfMonth = now.withDayOfMonth(1);  /* Az aktuális hónap első napja */ 
+        YearMonth ym = YearMonth.now();
+        LocalDate lastDayOfMonth = ym.atEndOfMonth();  /*Az aktuális hónap utolsó napja*/
+        
+        setStartEndDate(firstDayOfMonth.toString(), lastDayOfMonth.toString());
+        /* ha használjuk setStartEndDate metódust, akkor frissíti az adatokat is*/
     }
     
     /* ENTITY - DB ACTIONS */
@@ -59,6 +69,8 @@ public class ExpenseModel
             
             // Closing the connection as per the requirement with connection is completed
             con.close();
+            
+            
             return retVal;
         } 
         catch (SQLException ex)
@@ -275,7 +287,22 @@ public class ExpenseModel
     {
         this.startDate = startDate;
         this.endDate = endDate;
+        refreshFrData();
+    }
+    public void refreshFrData()
+    {
+        frList.clear();
         getFrList();
+    }
+
+    public String getStartDate()
+    {
+        return startDate;
+    }
+
+    public String getEndDate()
+    {
+        return endDate;
     }
 
     

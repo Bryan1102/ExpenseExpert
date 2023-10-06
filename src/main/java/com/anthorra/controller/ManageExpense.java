@@ -13,8 +13,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
-import java.time.YearMonth;
 
 /**
  *
@@ -26,9 +24,14 @@ import java.time.YearMonth;
 })
 public class ManageExpense extends HttpServlet
 {
+    /*model*/
+    private CategoryModel cm = new CategoryModel();
+    private ExpenseModel emodel = new ExpenseModel();
     
-    private CategoryModel cm;
-    private ExpenseModel emodel;
+    /*entity*/
+    private FinancialRecord fr;
+    
+    /*to the view*/
     private String message;
     private boolean isError;
     private String errorMessage;
@@ -36,9 +39,8 @@ public class ManageExpense extends HttpServlet
     private String[][] optionsSubCategories;
     private String categoriesJson;
     private String[][] frTable;
-    private FinancialRecord fr;
-    private String startDate = "2023-09-01";
-    private String endDate = "2023-09-30";
+    //private String startDate = "2023-09-01";
+    //private String endDate = "2023-09-30";
      
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -52,20 +54,6 @@ public class ManageExpense extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        /* default dátum megadás */
-        LocalDate now = LocalDate.now();  
-        LocalDate firstDayOfMonth = now.withDayOfMonth(1);  
-        System.out.println(firstDayOfMonth);  
-        
-        YearMonth ym = YearMonth.now();
-        int lastDayOfMonth = ym.atEndOfMonth().getDayOfMonth();  
-        System.out.println(lastDayOfMonth);
-        
-        
-        /* model-el létrehozása */
-        cm = new CategoryModel();
-        emodel = new ExpenseModel(startDate, endDate);
-        
         /* kategóriák kérése a modeltől */
         optionsCategories = cm.getOptionsCategories(); /* select list value-option feltöltéshez szükséges String [][] elemek */
         optionsSubCategories = cm.getOptionsSubCategories();
@@ -81,7 +69,8 @@ public class ManageExpense extends HttpServlet
         try (PrintWriter out = response.getWriter())
         {
             HtmlPage page = new HtmlPage();
-            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, isError?errorMessage:message, isError, fr);
+            page = ExpenseView.getPageExpense(optionsCategories, optionsSubCategories, categoriesJson, frTable, 
+                    isError?errorMessage:message, isError, fr, emodel.getStartDate(), emodel.getEndDate());
             out.println(page.getPage());
         }
         
@@ -181,6 +170,7 @@ public class ManageExpense extends HttpServlet
                     String rDate = request.getParameter("datum");
                     
                     int dbResponse = emodel.saveFinancialRecord(new FinancialRecord(amountDouble, isExpenseBoolean, mainCatId, subCatId, comment, rDate));
+                    emodel.refreshFrData();
                     message = (isExpenseBoolean?" Kiadás":" Bevétel") + " mentése sikeres! Azonosítója: " + dbResponse;
                 }
                 break;
@@ -224,6 +214,7 @@ public class ManageExpense extends HttpServlet
                     updatedFr.setId(id);
                     
                     int dbResponse = emodel.updateFinancialRecord(updatedFr);
+                    emodel.refreshFrData();
                     /*System.out.println("dbResponse: " + dbResponse);*/ /*a procedura a módosított sorok számát adja, tehát ha > 0 akkor sikeres*/
                     message = (isExpenseBoolean?" Kiadás":" Bevétel") + " módosítása sikeres!";
                 }
@@ -236,12 +227,22 @@ public class ManageExpense extends HttpServlet
                 if(idString != null)
                 {id = Integer.parseInt(idString);}
                 int dbResponse = emodel.deleteFinancialRecord(id);
+                emodel.refreshFrData();
                 message = (" Tétel törlése sikeres!");
                 
                 break;
                 
             case "requestCancel":
                 break;   
+                
+            case "requestRefreshFilter":
+                String fromDate = request.getParameter("fromDate");
+                String toDate = request.getParameter("toDate");
+                if(fromDate != null && toDate != null)
+                {
+                    emodel.setStartEndDate(fromDate, toDate);
+                }
+                break;
             
             } /*end of switch*/
         } /*end of if*/

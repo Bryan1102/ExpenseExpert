@@ -14,7 +14,8 @@ public class ExpenseView
 {
     public static HtmlPage getPageExpense(String[][] optionsCategories, String[][] optionsSubCategories, 
                                         String categoriesJson, String[][] frTable, 
-                                        String message, Boolean isError, FinancialRecord fr)
+                                        String message, Boolean isError, FinancialRecord fr,
+                                        String startDate, String endDate)
     {
         //String[] dummy = {" - válassz - "}; /* kezdeti érték a beágyazott kategóriákhoz, jelenleg nincs használatban */
         boolean isEdit = fr!=null;
@@ -159,11 +160,18 @@ public class ExpenseView
             row.addNestedDiv(mainRightDiv);
             
             
+            
             /* F.Record LIST */            
             HtmlBodyDiv mainListDiv = new HtmlBodyDiv(mainRightDiv)
                         .addHeaderText("Kiadások / Bevételek listája", 4)
-                        ;   
-            mainListDiv.addTable(frTable, true)
+                        ; 
+            
+            /* add table filters */
+            mainListDiv.addNestedDiv(getTableFilterDiv(startDate, endDate));
+            
+            /* add table  */
+            mainListDiv.addNestedDiv().addHeaderText("Tételek listája", 4).addAttribute("style", "margin:10px;")
+                    .addTable(frTable, true)
                     .addAttribute("style", "width:100%")
                     .addAttribute("class", "table table-hover")
                     .addAttribute("id", "frTable")
@@ -206,6 +214,45 @@ public class ExpenseView
         return jsCascade;
     }
 
+    
+    /* Táblázat szűrés control része */
+    private static HtmlBodyDiv getTableFilterDiv(String startDate, String endDate)
+    {
+        HtmlBodyDiv filterDiv = new HtmlBodyDiv();
+        filterDiv.setIsForm(true)
+                            .addAttribute("method", "post")
+                            .addAttribute("action", "ManageExpense")
+                            .addAttribute("style", "margin:10px");
+        filterDiv/*.addAttribute("class", "input-group mb-3")*/
+                .addAttribute("style", "margin=5px;");
+        filterDiv.addInputField("date")
+                    .addAttribute("name", "fromDate")
+                    .addAttribute("class", "form-control")
+                    .addAttribute("max", "2200-12-31")
+                    .addAttribute("min", "2000-01-01")
+                    .addAttribute("value", startDate)
+                    .addLabel("Dátum-tól ");
+        filterDiv.addInputField("date")
+                    .addAttribute("name", "toDate")
+                    .addAttribute("class", "form-control")
+                    .addAttribute("max", "2200-12-31")
+                    .addAttribute("min", "2000-01-01")
+                    .addAttribute("value", endDate)
+                    .addLabel("Dátum-ig ");
+        filterDiv.addButton(getFilterButton());
+        return filterDiv;
+    }
+    /* filter button */
+    private static HtmlButton getFilterButton()
+    {
+        HtmlButton button = new HtmlButton("Szűrés", "submit");
+        button
+            .addAttribute("class", "btn btn-success")
+            .addAttribute("name", "requestType")
+            .addAttribute("value", "requestRefreshFilter");
+        return button;
+    }
+    
     
     /* Gombokat összefogó div */
     private static HtmlBodyDiv getButtonsDiv(boolean isEdit)
