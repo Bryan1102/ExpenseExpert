@@ -24,7 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 })
 public class ManageCategories extends HttpServlet
 {
-    private CategoryModel cm;
+    private CategoryModel cm = new CategoryModel();
     private String[][] optionsCategories;
     private String[][] optionsSubCategories;
     private String[][] categoriesTable;
@@ -44,7 +44,8 @@ public class ManageCategories extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        cm = new CategoryModel();
+        //cm = new CategoryModel();
+        cm.refreshCategories();
         optionsCategories = cm.getOptionsCategories();
         optionsSubCategories = cm.getOptionsSubCategories();
         categoriesTable = cm.getCategoriesTable();

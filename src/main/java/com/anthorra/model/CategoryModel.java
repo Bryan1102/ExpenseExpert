@@ -26,15 +26,21 @@ public class CategoryModel
 
     public CategoryModel()
     {
+        refreshCategories();
+        
+    }
+    public void refreshCategories()
+    {
+        if(mainCategories != null ){mainCategories.clear();}
+         if(subCategories != null ){subCategories.clear();}
+        
         this.mainCategories = retrieveMainCategories();
         this.subCategories = retrieveSubCategories();
         ConvertCategoriesToArray();
         ConvertSubCategoriesToArray();
         ConvertCategoriesToTable();
         //ConvertCategoriesToJson(); /* egymásba ágyazott kategóriák JScript input-ja */
-        
     }
-    
     
     
     private ArrayList retrieveMainCategories()
