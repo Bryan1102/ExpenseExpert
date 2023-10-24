@@ -35,7 +35,7 @@ public class HtmlHref extends HtmlBodyElement
         href += this.url;
         href += "\">";
         href += this.text;
-        href += "</a><br>";
+        href += "</a>";
         
         return href;
     }
